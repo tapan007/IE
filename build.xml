@@ -1,0 +1,933 @@
+<project name="Sample usage of Salesforce Ant tasks" default="run" basedir="." xmlns:sf="antlib:com.salesforce">
+
+    
+    <!-- Load Properites File  -->
+    <property file="build.properties"/>
+    
+    
+    <!-- Define salesforce migration tool task  -->
+    <taskdef resource="com/salesforce/antlib.xml" uri="antlib:com.salesforce">
+        <classpath>
+            <pathelement location="../ant-salesforce.jar" />
+        </classpath>
+    </taskdef>
+    
+     <!-- Define path for svnant lib -->
+    <path id="svnant.classpath">
+        <pathelement location="${svnant.jar}"/>
+        <pathelement location="${svnClientAdapter.jar}"/>
+        <pathelement location="${svnjavahl.jar}"/>
+    </path>
+   
+
+    
+    <!-- Define ant contib task to have complex logic like if else and for loop etc. -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml" 
+              classpath="${ant.contrib.jar}" />
+	
+    
+    <!-- Define ant http task to make http get and post to salesforce for data -->  
+	<taskdef name="http" 
+             classname="org.missinglink.ant.task.http.HttpClientTask" classpath="${ant.http.jar}"/> 
+    
+    
+    <!-- Define xmltask to parse xml and add node to xml etc. -->
+    <taskdef name="xmltask" 
+             classname="com.oopsconsultancy.xmltask.ant.XmlTask" classpath="${ant.xmltask.jar}"/>
+    
+    
+    <!-- Define custom EncodeBase64 task to convert zip back up to base64 so that it can be post to SF -->
+    <taskdef name="EncodeBased64" 
+             classname="EncodeBased64Binary" classpath="${ant.svnsalesforce.jar}" />
+    
+    
+    <!-- Define custom prepartepackagexml task to create package xml from svn change log-->
+    <taskdef name="preparepackagexml" 
+             classname="CreatePackgeXML" classpath="${ant.svnsalesforce.jar}"/>
+    
+    
+    <!-- Define custom copyfiles task to prepare deployment folder from svn using package xml-->
+    <taskdef name="copyfiles" 
+             classname="CopyFilesUsingPackageXML" classpath="${ant.svnsalesforce.jar}"/>
+    
+    
+    <!--   Define SVN task using svn library -->
+    <taskdef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.classpath"/>
+    
+    <!--   Define SVN Settings used for SVN task -->
+    
+    <svnSetting
+        svnkit="false"
+        javahl="false"
+        failonerror="true"
+        id="svn.settings"
+        username="${svn.username}"
+        password="${svn.password}" />
+    
+    
+    <!-- Login into Salesforce and return the session Id and serverUrl using http task-->
+    <macrodef name="login">
+        <attribute name="username" description="Salesforce user name."/>
+        <attribute name="password" description="Salesforce password."/>
+        <attribute name="serverurl" description="Server Url property."/>
+        <attribute name="sessionId" description="Session Id property."/>
+        <attribute name="loginUrl" description="Session Id property."/>
+        
+        <sequential>
+            
+            <!-- Obtain Session Id via Login SOAP service -->
+            <http url="@{loginUrl}" method="POST" failonunexpected="false"
+                entityProperty="loginResponse" statusProperty="loginResponseStatus" 
+                printrequestheaders="false" printresponseheaders="false" printrequest="false">
+                <headers>
+                    <header name="Content-Type" value="text/xml"/>
+                    <header name="SOAPAction" value="login"/>
+                </headers>
+                <entity>
+                    <![CDATA[
+                    <env:Envelope xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
+                        xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' 
+                        xmlns:env='http://schemas.xmlsoap.org/soap/envelope/'>
+                        <env:Body>
+                            <sf:login xmlns:sf='urn:enterprise.soap.sforce.com'>
+                                <sf:username>@{username}</sf:username>
+                                <sf:password>@{password}</sf:password>
+                            </sf:login>
+                        </env:Body>
+                    </env:Envelope>
+                    ]]>
+                </entity>
+            </http>
+            
+            <!-- Parse response -->
+            
+            <xmltask destbuffer="loginResponseBuffer">
+                <insert path="/">${loginResponse}</insert>
+            </xmltask>
+            <if>
+                <!-- Success? -->
+                <equals arg1="${loginResponseStatus}" arg2="200"/>
+                <then>
+                    <!-- Parse sessionId and serverUrl -->
+                    <xmltask sourcebuffer="loginResponseBuffer" failWithoutMatch="true">
+                        <copy path="/*[local-name()='Envelope']/*[local-name()='Body']/:loginResponse/:result/:sessionId/text()"
+                          property="@{sessionId}"/>
+                        <copy path="/*[local-name()='Envelope']/*[local-name()='Body']/:loginResponse/:result/:serverUrl/text()"
+                          property="@{serverUrl}"/>
+                    </xmltask>
+                </then>
+                <else>
+                    <!-- Parse login error message and fail build -->
+                    <xmltask sourcebuffer="loginResponseBuffer" failWithoutMatch="true">
+                        <copy 
+                          path="/*[local-name()='Envelope']/*[local-name()='Body']/*[local-name()='Fault']/*[local-name()='faultstring']/text()" 
+                          property="faultString"/>
+                    </xmltask>
+                    <fail message="${faultString}" />
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+    
+    <!-- Provides access to the Salesforce REST API for a SOQL query -->
+    
+    <macrodef name="runQuery" description="Run database query">
+        <attribute name="sessionId" description="Salesforce user name."/>
+        <attribute name="serverUrl" description="Salesforce url."/>
+        <attribute name="query" description="Salesforce password."/>
+        <attribute name="queryResult" description="Query result property name"/>
+        <sequential>
+            <!-- Extract host/instance name from the serverUrl returned from the login response -->
+            <propertyregex property="host"
+              input="${serverUrl}"
+              regexp="^((http[s]?|ftp):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$"
+              select="\3"
+              casesensitive="false" />           
+            <!-- Execute Apex via REST API /query resource -->
+            <http url="https://${host}/services/data/v34.0/query" method="GET" 
+                  entityProperty="queryResultResponse" statusProperty="queryResponseStatus" 
+                  printrequestheaders="false"  printresponse="false" printrequest="false">
+                <headers>
+                    <header name="Authorization" value="Bearer ${sessionId}"/>
+                </headers>
+                <query>
+                    <parameter name="q" value="@{query}"/>
+                </query>
+            </http>
+            
+            <if>
+                <!-- Success -->
+                <equals arg1="${queryResponseStatus}" arg2="200"/>
+                <then>
+                   <property name="@{queryResult}" value="${queryResultResponse}"/>
+                </then>
+                <else>
+                    <fail message="${queryResultResponse}" />
+                </else>
+            </if>
+            
+        </sequential>
+    </macrodef>
+    
+    
+    <!-- Prepare deployment, check the svn diff log , prepare package xml from diff log and then copy files form svn -->
+    
+    <macrodef name="preparedeployment">
+        <attribute name="svnBranchUrl" description="svn branch url"/>
+        <attribute name="svnBranchLocalDir" description="local directory checked out with svn" />
+        <attribute name="diffLogFolder"  description="SVN Diff log folder"/>
+        <attribute name="packageXmlFolder" description="SVN Diff log folder"/>
+        <attribute name="deploymentFolderPath" description="Deployment folder path"/>
+        <attribute name="sfusername" description="Salesforce user name."/>
+        <attribute name="sfpassword" description="Salesforce password."/>
+        
+        <attribute name="sfloginUrl" description="Salesforce login URL"/>
+        <attribute name="svnusername" description="Salesforce user name."/>
+        <attribute name="svnpassword" description="Salesforce password."/>
+ 
+        <sequential>
+            <echo> Print parameter from Jenkins </echo>
+        
+            <echo> Start_SVN_Version : ${Start_SVN_Version} </echo>
+            <echo> End_SVN_Version: ${End_SVN_Version} </echo>
+            <echo> Build_Type: ${Build_Type} </echo>
+            
+            <condition property="is-rollback"> 
+                <equals arg1="${Build_Type}" arg2="${svn.buildtype.rollback}"/>
+             </condition>
+            <!-- check the current svn revision/version -->
+            <echo message="${line.separator} ****  pull from git repository ***"/>
+            <git command="pull" >
+                
+            </git>
+            
+            <echo>${line.separator} ****Connecting to Salesforce**** </echo>
+            
+            <!-- login to salesforce  -->
+            <login username="@{sfusername}" password="@{sfpassword}" serverurl="serverUrl" sessionId="sessionId"
+                   loginUrl="@{sfloginUrl}"/>
+            
+            <echo>${line.separator} *** Conected to Salesforce **** </echo>
+              <if>
+                <equals arg1="${is-rollback}" arg2="true" />
+                <then>
+                    <!-- if rollback don't check for condtion -->
+                    
+                    <runQuery
+                        sessionId="${sessionId}"
+                        serverUrl="${serverUrl}"
+                        queryResult="buildDetails"
+                        query="SELECT Id, SVNRevisionStart__c,SVNRevisionEnd__c FROM BuildDetails__c  order by CreatedDate DESC LIMIT 1"/>
+
+                    <!-- Parse JSON result via JavaScript eval -->
+                    <script language="javascript">
+                        <![CDATA[ 
+                            var response = eval('('+project.getProperty('buildDetails')+')');
+                            if(response.records[0]){
+                                var endRevisionParameter =  project.getProperty('End_SVN_Version');
+                                project.setProperty('start.revision', response.records[0].SVNRevisionEnd__c);
+                                if(endRevisionParameter != null && !isNaN(endRevisionParameter)){
+                                    project.setProperty('end.revision', endRevisionParameter);
+                                }else{
+                                    project.setProperty('end.revision', response.records[0].SVNRevisionStart__c);
+                                }
+
+                            }
+                        ]]>
+                    </script>
+                    
+                </then>
+                <else>
+                   
+                    <!-- for deploy -->
+                    <!-- Set Start Revision  -->
+                    <if>
+
+                        <matches pattern="^[0-9]*$" string="${Start_SVN_Version}" casesensitive="false"/>
+
+                        <then>
+                            <property name="start.revision" value="${Start_SVN_Version}"/>
+                        </then>
+                        <else>
+                            <echo>${line.separator} *** Get the las revison deployed to SF </echo>
+
+                            <!-- SOQL to salesforce to get latest revision deployed to salesforce -->
+
+                            <runQuery
+                                sessionId="${sessionId}"
+                                serverUrl="${serverUrl}"
+                                queryResult="buildDetails"
+                                query="SELECT Id, SVNRevisionStart__c,SVNRevisionEnd__c FROM BuildDetails__c  order by CreatedDate DESC LIMIT 1"/>
+
+                            <!-- Parse JSON result via JavaScript eval -->
+                            <script language="javascript">
+                                var response = eval('('+project.getProperty('buildDetails')+')');
+                                if(response.records[0]){
+                                    project.setProperty('start.revision', response.records[0].SVNRevisionEnd__c);
+                                }else{
+
+                                    project.setProperty('start.revision', '1');
+                                }
+
+
+                            </script>
+                        </else>
+                    </if>
+
+                    <!-- Set End Revision  -->
+
+                    <if>
+
+                        <matches pattern="^[0-9]*$" string="${End_SVN_Version}" casesensitive="false"/>
+
+                        <then>
+                            <property name="end.revision" value="${End_SVN_Version}"/>
+                        </then>
+                        <else>
+                            <echo>${line.separator} *** Get the Start Revision  </echo>
+
+                            <!-- SOQL to salesforce to get latest revision deployed to salesforce -->
+                          
+                            
+                            
+                            <exec executable="git" dir="${git.branch.localdirectory}" outputproperty="end.revision" failonerror="true">
+                                <arg value="rev-parse" />
+                                <arg value="HEAD" />
+                             
+                            </exec>
+                        </else>
+                    </if>
+            
+                    
+                </else>
+            </if>
+            
+            
+            
+            
+            <echo message="${line.separator} ****  updating loacal svn folder to ${end.revision} ***"/>
+            <!-- <svn refid="svn.settings" > 
+                <update revision="${end.revision}" recurse="true" dir="@{svnBranchLocalDir}" /> 
+            </svn> -->
+            
+            <echo> ${line.separator} *** check for ${start.revision} and ${end.revision} ***</echo>
+            
+            <if>
+                <equals arg1="${is-rollback}" arg2="true" />
+                <then>
+                    <!-- if rollback don't check for condtion -->
+                </then>
+                <else>
+                    <script language="javascript">
+                    <![CDATA[
+                        var strev = parseInt(project.getProperty('start.revision'));
+                        var endrev = parseInt(project.getProperty('end.revision'));
+                        project.setProperty('isGreater', strev > endrev);
+                    ]]>
+                    </script>
+            
+           
+                    <condition property="not-valid-versions">  
+                        <equals arg1="${isGreater}" arg2="true"/>  
+                    </condition>  
+                     <fail message="***End Revsion should be Greater than Start revision for deployment***" if="not-valid-versions" />  
+                </else>
+            </if>
+            
+            
+          <echo message="${isGreater}"/>
+            
+            <echo>${line.separator} Current Revision found for branch ${svn.ant.branchurl} : ${end.revision}</echo>
+         
+            
+            <delete dir="@{packageXmlFolder}"/>
+            <delete dir="@{diffLogFolder}"/>
+            <delete dir="@{deploymentFolderPath}"/>
+            
+            <mkdir dir="@{packageXmlFolder}"/>
+            <mkdir dir="@{diffLogFolder}"/>
+            <mkdir dir="@{deploymentFolderPath}"/>
+            
+            <!-- getting diff log from svn beween two version using svn commandline "-->
+            <echo> ${line.separator} *** Geting the svn change log between ${start.revision} and ${end.revision} ***</echo>
+            
+            <exec executable="git"  dir="${git.branch.localdirectory}"  output="@{diffLogFolder}/${svn.difflog.name}">
+                <arg line="diff"/>
+                <arg line="--name-status"/>
+                <arg line="${start.revision}"/>
+                <arg line="${end.revision}"/>
+       
+            </exec>
+         
+           
+        
+            <echo>${line.separator} Diff change log created </echo>
+            
+            <condition property="fs.length.empty">
+                <length mode="all" when="eq" length="0" file="@{diffLogFolder}/${svn.difflog.name}">
+                </length>
+            </condition>
+            <!-- call the java code to prepare package xml from diff log-->
+            
+            <if>
+             <equals arg1="${fs.length.empty}" arg2="true" />
+             <then>
+               <echo message="${line.separator} ${line.separator}  *****There are no changes is SVN*****" />
+             </then>
+             <else>
+                <if>
+                    <equals arg1="${is-rollback}" arg2="true" />
+                    <then>
+                        <echo>***Rollback***</echo>
+                        <script language="javascript">
+                           <![CDATA[ 
+                                        project.setProperty("svn.log.comment","Rollback");
+                            ]]>
+                        </script>
+                    </then>
+                    <else>
+                      
+                        
+                         <exec executable="git"  dir="${git.branch.localdirectory}" output="@{packageXmlFolder}/${svn.commentlog.fld.name}" failonerror="true">
+                            <arg line="log  ${start.revision} ${end.revision} "/>
+                        </exec>
+                        
+                       
+                        <loadfile property="svn.log.comment.unescpae" 
+                                  srcFile="@{packageXmlFolder}/${svn.commentlog.fld.name}"  failonerror="false"/>
+                        <script language="javascript">
+                            <![CDATA[ 
+                                var comments = project.getProperty('svn.log.comment.unescpae');
+                                if(comments){
+                                    if(comments.length >=131072){ 
+                                        comments = comments.substring(0, 131071);
+                                     }
+                                        project.setProperty("svn.log.comment",comments.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '\\"').replace(/(?:\r\n|\r|\n)/g, '\\n '));
+
+                                }
+
+
+                            ]]>
+                        </script>
+                    </else> 
+                </if>
+                
+               <echo>***preparing package xml*** </echo>
+            
+                <preparepackagexml svnDiffLogUrl="@{diffLogFolder}/${svn.difflog.name}"
+                                   packageXmlUrl="@{packageXmlFolder}"/>
+                <echo>${line.separator} Diff change log created </echo> 
+                <!-- prepared deployment folder -->
+                <echo>${line.separator} *** preparing deployment folders xml *** </echo>
+
+                <!-- IF package xml created for deployment please copy files from svn-->
+                 <echo>${line.separator} ****** local direct for copy @{svnBranchLocalDir} destin: @{deploymentFolderPath}</echo>
+                 <if>
+                    <available file="@{packageXmlFolder}/${sf.deploycodepkg.fld.name}/${packagexml.name}"/>
+                    <then>
+                        <copyfiles srcUrl="@{svnBranchLocalDir}" destUrl="@{deploymentFolderPath}"
+                           packageXmlDir="@{packageXmlFolder}"/>
+                        <echo>${line.separator} Deployment folder created </echo> 
+                    </then>
+                    <else>
+                        <echo>***Nothing found for deploy. Checking for undeploy *** </echo>
+                    </else>
+                </if>
+               
+                <echo>${line.separator} Cleaning folder </echo> 
+
+                <!-- <delete dir="@{packageXmlFolder}" failonerror="false"/> -->
+                <!-- <delete dir="@{diffLogFolder}" failonerror="false"/> -->
+             </else>
+            </if>
+            
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="createBuildRecord" description="Provides access to the Salesforce Tooling REST API StaticResource resource">
+        <attribute name="username" description="Salesforce user name."/>
+		<attribute name="password" description="Salesforce password."/>
+        <attribute name="sessionId" description="Salesforce user name."/>
+        <attribute name="startrev" description="Salesforce password."/>
+        <attribute name="endrev" description="Salesforce password."/>
+        <attribute name="buildrecordId" description="Salesforce password."/>  
+        <attribute name="endpointForBuildRecord" 
+                  description="https://tapan1-dev-ed.my.salesforce.com/services/data/v34.0/sobjects/BuildDetails__c/" />
+        <attribute name="endpointForBuildAttachment" 
+                  description="https://tapan1-dev-ed.my.salesforce.com/services/data/v34.0/sobjects/Attachment/" />
+        <attribute name="backupfilepath" description="D:/ANT SF/salesforce_ant_33.0/SVNANT/backup/code.zip"/>
+        <attribute name="loginUrl" description="login url" />
+        <attribute name="svnlogcomment" description="login url" />
+        <sequential>
+        
+            <if>
+                <!-- Success? <equals arg1="@{sessionId}" arg2="${sessionId}"/> -->
+                <equals arg1="@{sessionId}" arg2=""/>
+                
+                <then>
+                    <!-- Login -->			
+                    <login username="@{username}" loginUrl="@{loginUrl}" 
+                           password="@{password}" serverurl="serverUrl" sessionId="sessionId"/>
+                </then>
+                <else>
+                    
+                </else>
+            </if>
+		
+       
+		    <http url="@{endpointForBuildRecord}" printresponse="false" 
+                  printrequest="false" expected="201" method="POST"  failonunexpected="false"
+                  entityProperty="recordCreateResponse" statusProperty="recordResponseStatus" >
+		    	<headers>
+		    		<header name="Content-Type" value="application/json"/>
+		    		<header name="Authorization" value="Bearer @{sessionId}"/>
+		    	</headers>
+		    	<entity>
+		    		{
+		    			"SVNRevisionStart__c": "@{startrev}",
+		    			"SVNRevisionEnd__c": "@{endrev}",
+                        "Description__c": "@{svnlogcomment}"
+		    			
+		    		}
+		    	</entity>
+		    </http>
+            <if>
+                <!-- Success? -->
+                <equals arg1="${recordResponseStatus}" arg2="201"/>
+                <then>
+                    <!-- Parse JSON response and set properites -->
+                    <script language="javascript">
+                        <![CDATA[
+                            var response = eval('('+project.getProperty('recordCreateResponse')+')');
+
+                               project.setProperty('@{buildrecordId}' , response.id);
+                         ]]>
+                    </script>
+                    <echo>${line.separator} *** Build Record id Created *** </echo>
+                    <EncodeBased64 srcPatch="@{backupfilepath}" retproperty="base64EncodedValue"/>         
+                    <createAttachment body="${base64EncodedValue}" sessionId="${sessionId}" 
+                                      recordId="${buildrecordId}" endpoint="@{endpointForBuildAttachment}"/>
+                    <echo>${line.separator} *** Backup attached to  build record *** </echo>
+                </then>
+                <else>
+                    <!-- Parse login error message and fail build -->
+                    <echo message="${line.separator} ***** WARNING -Build record creation in SF failed.${line.separator} " level="warning"/>
+                    <echo message="${line.separator}**** WARNING Response:  ${recordCreateResponse}***** ${line.separator} " 
+                          level="warning" />
+                    <echo message="${line.separator}**** WARNING Please manullay create build record with svn version in SF***** ${line.separator} " 
+                          level="warning" />
+                </else>
+            </if>
+            
+           
+		</sequential>
+	</macrodef>
+    
+     <!-- Create attachment in Salesforce -->
+    
+    <macrodef name="createAttachment">
+
+		<attribute name="body" description="Property to store the base 64 encoded data."/>
+        <attribute name="sessionId" description="Property to store the base 64 encoded data."/>
+        <attribute name="recordId" description="Property to store the base 64 encoded data." />
+        <attribute name="endpoint" description="https://tapan1-dev-ed.my.salesforce.com/services/data/v34.0/sobjects/Attachment/" />
+		<sequential>
+		
+            <http url="@{endpoint}" printresponse="false" printrequest="false" expected="201" 
+                  method="POST" entityProperty="recordCreateResponse" statusProperty="loginResponseStatus" failonunexpected="true">
+		    	<headers>
+		    		<header name="Content-Type" value="application/json"/>
+		    		<header name="Authorization" value="Bearer @{sessionId}"/>
+		    	</headers>
+		    	<entity>
+		    		{
+		    			"ParentId": "@{recordId}",
+		    			"Name": "Backbup.zip",
+		    			"Body" : "@{body}"
+		    		}
+		    	</entity>
+		    </http>
+		</sequential>		
+	</macrodef>
+    
+    <macrodef name="deploytosffromsvn" description="it will deploy the code from svn to Salesforce ">
+        <!-- Salsforce parameters -->
+        <attribute name="sfusername" description="Salesforce user name."/>
+        <attribute name="sfpassword" description="Salesforce password."/>
+        <attribute name="sfserverurl" description="Salesforce server  URL"/>
+        <attribute name="sfloginUrl" description="Salesforce login URL"/>
+        <attribute name="sfmaxPoll" description="Salesforce login URL"/>
+        <attribute name="sessionId" description="Salesforce user name." default="${sessionId}"/>
+        <attribute name="endpointForBuildRecord" description="Buird record creation end point" />
+        <attribute name="endpointForBuildAttachment" description="Attachment creation end point" />
+        
+        <!-- SVN Details parameters -->
+        <attribute name="svnlogcomment" description="login url" default="${svn.log.comment}"/>
+        <attribute name="svnBranchUrl" description="svn branch url"/>
+        <attribute name="svnBranchLocalDir" description="local directory checked out with svn" />
+        <attribute name="startrev" description="Salesforce password." default="${start.revision}"/>
+        <attribute name="endrev" description="Salesforce password." default ="${end.revision}"/>
+        <attribute name="rootdir"  description="SVN Diff log folder"/>
+        <attribute name="svnusername" description="Salesforce user name."/>
+        <attribute name="svnpassword" description="Salesforce password."/>
+       
+        
+        <sequential>
+           
+            <echo>${line.separator} ****Check for describe log avilability **** </echo>
+
+            <if>
+                <available file="${ant.external.lib}/${sf.describe.log.name}"/>
+                <then>
+
+                </then>
+                <else>
+                     <sf:describeMetadata
+                            username="@{sfusername}"
+                            password="@{sfpassword}"
+                            serverurl="@{sfserverurl}"
+                            resultFilePath="${ant.external.lib}/${sf.describe.log.name}"/>
+                </else>
+            </if> 
+            <preparedeployment 
+                svnBranchUrl="@{svnBranchUrl}" 
+                svnBranchLocalDir ="@{svnBranchLocalDir}"
+                diffLogFolder="@{rootdir}/${svn.ant.difflog.fld.name}"
+                sfusername = "@{sfusername}"
+                sfpassword = "@{sfpassword}"
+                svnusername = "@{svnusername}"
+                svnpassword = "@{svnpassword}"
+                sfloginUrl = "@{sfloginUrl}"
+                packageXmlFolder="@{rootdir}/${svn.packagexml.fld.name}"
+                deploymentFolderPath="@{rootdir}/${svn.sf.deployment.fld.name}"/>
+
+           
+            <if>
+                 <equals arg1="${fs.length.empty}" arg2="true" />
+                 <then>
+                 </then>
+                 <else>
+                    <start-deployment       
+                        username = "@{sfusername}"
+                        password = "@{sfpassword}"
+                        maxPoll = "@{sfmaxPoll}"
+                        serverurl = "${sf.serverurl}"
+                        sessionId = "@{sessionId}"
+                        loginUrl = "@{sfloginUrl}"
+                        deploymentDir = "@{rootdir}/${svn.sf.deployment.fld.name}"
+                        packagexmlDir = "@{rootdir}/${svn.packagexml.fld.name}"
+                        startrev = "@{startrev}"
+                        endrev =  "@{endrev}" 
+                        buildendpoint = "@{endpointForBuildRecord}"             
+                        attachmentendpoint = "@{endpointForBuildAttachment}" 
+                        svnlogcomment="@{svnlogcomment}"/>
+                 </else>
+            </if>
+        </sequential>
+       
+    </macrodef>
+    
+    <target name="deploy-svn-to-sf" >      
+        
+        <deploytosffromsvn               
+            sfusername="${sf.username}"
+            sfpassword="${sf.password}" 
+            sfserverurl="${sf.serverurl}"
+            sfloginUrl="${sf.login.url}"
+            sfmaxPoll="${sf.maxPoll}"
+            svnusername="${svn.username}"
+            svnpassword="${svn.password}"               
+            endpointForBuildRecord = "${sf.buildrecord.endpoint}"
+            endpointForBuildAttachment = "${sf.attachment.endpoint}" 
+            svnBranchUrl="${svn.ant.branchurl}"
+            svnBranchLocalDir="${git.branch.localdirectory}"
+            rootdir ="${svn.salesforc.root.dir}"  />                 
+           
+    </target>
+   
+    
+    <macrodef name="start-deployment">
+        
+        <!-- retrieve for backup -->
+        <attribute name="username" description="Property to store the base 64 encoded data."/>
+        <attribute name="password" description="Property to store the base 64 encoded data."/>
+        <attribute name="maxPoll" description="Property to store the base 64 encoded data." />
+        <attribute name="serverurl" description="Property to store the base 64 encoded data." />
+        <attribute name="deploymentDir" description="Property to store the base 64 encoded data." />
+        <attribute name="packagexmlDir" description="Property to store the base 64 encoded data." /> 
+        <attribute name="sessionId" description="Property to store the base 64 encoded data." />
+        <attribute name="loginUrl" description="Property to store the base 64 encoded data." />
+        <attribute name="startrev" description="Property to store the base 64 encoded data." />
+        <attribute name="endrev" description="Property to store the base 64 encoded data." />
+        <attribute name="buildendpoint" description="Property to store the base 64 encoded data." />
+        <attribute name="attachmentendpoint" description="Property to store the base 64 encoded data." />
+        <attribute name="svnlogcomment" description="Property to store the base 64 encoded data." />
+       
+        <sequential>
+            <!-- retrieve for backup -->
+            
+            <condition property="isCheckOnly">
+                <equals arg1="${Build_Type}" arg2="${svn.buildtype.validateonly}" />
+            </condition>
+            <echo>Check only: ${isCheckOnly} </echo>
+            <if>
+                <available file="@{packagexmlDir}/${sf.rollback.fld.name}/${sf.deploycodepkg.fld.name}/${packagexml.name}"/>
+                <then>
+                    <sf:retrieve username="@{username}" password="@{password}" serverurl="@{serverurl}"
+                            maxPoll="@{maxPoll}" 
+                            retrieveTarget="@{packagexmlDir}/${sf.rollback.fld.name}/${sf.deploycodepkg.fld.name}/" 
+                            unpackaged="@{packagexmlDir}/${sf.rollback.fld.name}/${sf.deploycodepkg.fld.name}/${packagexml.name}"/>
+                </then>
+                <else>
+                    <echo>***Nothing found for back up for roll back *** </echo>
+                </else>
+            </if>
+            
+            <!-- code deploymnet -->
+            
+            <if>
+                <available file="@{deploymentDir}/${packagexml.name}"/>
+                <then>
+                    <sf:deploy username="@{username}" checkOnly="${isCheckOnly}" 
+                               password="@{password}" serverurl="@{serverurl}" maxPoll="@{maxPoll}"
+                        deployRoot="@{deploymentDir}"  rollbackOnError="true">
+                    </sf:deploy>
+                </then>
+                
+                <elseif>
+                    <available file="@{packagexmlDir}/${sf.removecodepkg.fld.name}/${packagexml.name}"/>
+                    <then>
+                        <sf:deploy username="@{username}" password="@{password}" checkOnly="${isCheckOnly}" 
+                                   serverurl="@{serverurl}" maxPoll="@{maxPoll}"
+                            deployRoot="@{packagexmlDir}/${sf.removecodepkg.fld.name}"  rollbackOnError="true">
+                        </sf:deploy>
+                    </then>
+                </elseif>
+                
+                <else>
+                    <echo>***Nothing found for Deployment *** </echo>
+                </else>
+            </if>
+            
+            <!-- check if anything is there for undeploy/remove -->
+           
+            
+            <!-- attach record to Salesforce -->
+            <if>
+                <equals arg1="${isCheckOnly}" arg2="true" />
+                <then>
+                    <echo > ${line.separator} ***Validated ***</echo>
+                </then>
+                <else>
+                    <echo > ${line.separator} ***Conveting backup to .zip ***</echo>
+            
+                <zip destfile="@{packagexmlDir}/${sf.backup.fld.name}" basedir="@{packagexmlDir}"/>
+
+
+                <createBuildRecord
+                    username = "@{username}"
+                    password = "@{password}"
+                    sessionId = "@{sessionId}"
+                    startrev = "@{startrev}"
+                    endrev = "@{endrev}"
+                    buildrecordId = "buildrecordId"
+                    endpointForBuildRecord = "@{buildendpoint}"
+                    endpointForBuildAttachment = "@{attachmentendpoint}"
+                    backupfilepath = "@{packagexmlDir}/${sf.backup.fld.name}"
+                    loginUrl="@{loginUrl}"
+                    svnlogcomment="@{svnlogcomment}"/>  
+                
+                </else>
+            </if>
+                    
+  
+        </sequential>
+    </macrodef>
+    
+    <!-- check the svn-ant avilability -->
+    
+     <target name="tool-availability">
+        <available resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.classpath"
+                   property="available.svnant"/>
+        <echo message="SVN-ANT is available = ${available.svnant}"></echo>
+    </target>
+    
+    
+   
+
+    <target name="rollback-svn-to-sf" >
+       
+        <rollbackfromsvn 
+            svnBranchUrl="${svn.ant.branchurl}" 
+            svnBranchLocalDir ="${svnant.branch.localdirectory}"
+            rootdir="${svn.salesforc.root.dir}"
+           
+           />
+        <echo> ${line.separator} ${line.separator} ************* after perpare deployment  svnlocmment : ${svn.log.comment}</echo>
+       
+    </target>
+   
+    <macrodef name="rollbackfromsvn">
+        <attribute name="svnBranchUrl" />
+        <attribute name="svnBranchLocalDir" />
+        <attribute name="rootdir"  description="SVN Diff log folder"/>
+        <sequential>
+        
+         <rollback 
+            svnBranchUrl="@{svnBranchUrl}" 
+            svnBranchLocalDir ="@{svnBranchLocalDir}"
+            diffLogFolder="@{rootdir}/${svn.ant.difflog.fld.name}"
+            packageXmlFolder="@{rootdir}/${svn.packagexml.fld.name}"
+            deploymentFolderPath="@{rootdir}/${svn.sf.deployment.fld.name}"
+            tempsrc="@{rootdir}/${svn.sf.tempsrc.fld.name}"/>
+        </sequential>
+        
+    </macrodef>
+        
+
+     <macrodef name="rollback">
+        <attribute name="svnBranchUrl" />
+        <attribute name="svnBranchLocalDir" />
+        <attribute name="diffLogFolder" />
+        <attribute name="svnLastrevison" default="${end.revision}"/>
+        <attribute name="packageXmlFolder" />
+        <attribute name="deploymentFolderPath" />
+        <attribute name="tempsrc" />
+        <sequential>
+           
+            <echo message="${line.separator} ****  Preparing for Roll Back ***"/>
+
+            
+            <svn refid="svn.settings" > 
+                <update revision="HEAD" recurse="true" dir="@{svnBranchLocalDir}" /> 
+            </svn> 
+            
+             <!-- check the current svn revision/version -->
+            
+            <svn refid="svn.settings" >
+                <info target="@{svnBranchUrl}"/>
+            </svn>
+            
+            <echo>${line.separator} ****Connecting to Salesforce to get the last svn version deployed **** </echo>
+            
+                <!-- login to salesforce  -->
+            
+            <login username="${sf.username}" password="${sf.password}" serverurl="serverUrl" sessionId="sessionId"
+                   loginUrl="${sf.login.url}"/>
+            
+            <echo>${line.separator} *** Conected to Salesforce **** </echo>
+            
+            <echo>${line.separator} *** Get the las revison deployed to SF </echo>
+            
+            <!-- Query -->
+            
+            <runQuery
+                sessionId="${sessionId}"
+                serverUrl="${serverUrl}"
+                queryResult="buildDetails"
+                query="SELECT Id, SVNRevisionStart__c,SVNRevisionEnd__c FROM BuildDetails__c  order by CreatedDate DESC LIMIT 1"/>
+            
+            <!-- Parse JSON result via JavaScript eval -->
+            <script language="javascript">
+                var response = eval('('+project.getProperty('buildDetails')+')');
+                if(response.records[0]){
+                    project.setProperty('start.revision', response.records[0].SVNRevisionEnd__c);
+                }else{
+                    project.setProperty('start.revision', '1');
+                }
+                
+                
+            </script>
+            
+            <echo>${line.separator} Last Revision deployed successfully ${start.revision}</echo>
+            
+            <echo>${line.separator} Current Revision found for branch ${svn.ant.branchurl} : ${end.revision}</echo>
+         
+            
+            <delete dir="@{packageXmlFolder}"/>
+            <delete dir="@{diffLogFolder}"/>
+            <delete dir="@{deploymentFolderPath}"/>
+            <delete dir="@{tempsrc}"/>
+            <mkdir dir="@{packageXmlFolder}"/>
+            <mkdir dir="@{diffLogFolder}"/>
+            <mkdir dir="@{deploymentFolderPath}"/>
+            <mkdir dir="@{tempsrc}"/>
+            <input     message="Please Enter SVN revision number to rollback (check salesforce latest revision deployed):"   addproperty="svn.revision.roolback"  />
+            <!-- getting diff log from svn beween two version using svn commandline-->
+            <echo> ${line.separator} Export code from svn ${svn.revision.roolback}. Please wait it will take some time.  </echo>
+            <svn refid="svn.settings" >
+                <export srcUrl="@{svnBranchUrl}"  destPath="@{tempsrc}" revision="${svn.revision.roolback}" force="true"/>
+            </svn>
+            <echo> ${line.separator} Geting the svn change log between ${svn.revision.roolback} and ${svnlastrev.deployed} </echo>
+            <exec executable="cmd"  output="@{diffLogFolder}/${svn.difflog.name}" failonerror="true">
+                <arg line="/c svn diff --summarize -r ${start.revision}:${svn.revision.roolback} --username ${svn.username} --password ${svn.password} --non-interactive  '@{svnBranchUrl}'"/>
+            </exec>
+         
+           
+        
+            <echo>${line.separator} Diff change log created </echo>
+            <condition property="fs.length.empty">
+                <length mode="all" when="eq" length="0" file="@{diffLogFolder}/${svn.difflog.name}">
+                </length>
+            </condition>
+            <!-- call the java code to prepare package xml from diff log-->
+            
+            <if>
+             <equals arg1="${fs.length.empty}" arg2="true" />
+             <then>
+               <echo message="${line.separator} ${line.separator}  *****There are no changes in SVN*****" />
+             </then>
+             <else>
+              
+               <echo>***preparing package xml*** </echo>
+            
+                <preparepackagexml svnDiffLogUrl="@{diffLogFolder}/${svn.difflog.name}"
+                                   packageXmlUrl="@{packageXmlFolder}"/>
+                <echo>${line.separator} Diff change log created </echo> 
+                <!-- prepared deployment folder -->
+                <echo>${line.separator} *** preparing deployment folders xml *** </echo>
+
+                <!-- IF package xml created for deployment please copy files from svn-->
+                 <if>
+                    <available file="@{packageXmlFolder}/${sf.deploycodepkg.fld.name}/${packagexml.name}"/>
+                    <then>
+                        <copyfiles srcUrl="@{tempsrc}" destUrl="@{deploymentFolderPath}"
+                           packageXmlDir="@{packageXmlFolder}"/>
+                        <echo>${line.separator} Deployment folder created </echo>
+                       
+                    </then>
+                    <else>
+                        <echo>***Nothing found for deploy. Checking for undeploy *** </echo>
+                    </else>
+                </if>
+               
+                <echo>${line.separator} Cleaning folder </echo> 
+
+                <!-- <delete dir="@{packageXmlFolder}" failonerror="false"/> -->
+                <!-- <delete dir="@{diffLogFolder}" failonerror="false"/> -->
+             </else>
+            </if>
+            
+            
+        </sequential>
+    </macrodef>
+    
+    
+
+       <macrodef name="git">
+            <attribute name="command" />
+            <element name="args" optional="true" />
+            <sequential>
+                <echo message="Executing Command in folder ${git.branch.localdirectory}" />
+                <echo message="git @{command}" />
+                <exec executable="git" dir="${git.branch.localdirectory}" failonerror="true">
+                    <arg value="@{command}" />
+                    <args/>
+                </exec>
+            </sequential>
+        </macrodef>
+    
+    
+ 
+    
+</project>
