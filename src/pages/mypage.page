@@ -1,0 +1,8 @@
+<apex:page controller="mycontroller">
+<apex:messages />
+<apex:form >
+<apex:inputText value="{!input}" required="true"/>
+<apex:commandButton value="GO" action="{!go}" />
+</apex:form>
+<apex:outputText value="{!input}"/>
+</apex:page>

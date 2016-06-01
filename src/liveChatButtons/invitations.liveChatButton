@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LiveChatButton xmlns="http://soap.sforce.com/2006/04/metadata">
+    <animation>Slide</animation>
+    <deployments>
+        <deployment>Technical</deployment>
+    </deployments>
+    <enableQueue>false</enableQueue>
+    <inviteEndPosition>Top</inviteEndPosition>
+    <inviteStartPosition>TopLeftTop</inviteStartPosition>
+    <isActive>false</isActive>
+    <label>invitations</label>
+    <optionsHasInviteAfterAccept>false</optionsHasInviteAfterAccept>
+    <optionsHasInviteAfterReject>false</optionsHasInviteAfterReject>
+    <optionsIsInviteAutoRemove>false</optionsIsInviteAutoRemove>
+    <routingType>Choice</routingType>
+    <skills>
+        <skill>Tech</skill>
+    </skills>
+    <type>Invite</type>
+    <windowLanguage>en_US</windowLanguage>
+</LiveChatButton>

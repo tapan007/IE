@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AuthProvider xmlns="http://soap.sforce.com/2006/04/metadata">
+    <authorizeUrl>https://www.linkedin.com/uas/oauth2/authorization</authorizeUrl>
+    <consumerKey>75flwv65mzy6hs</consumerKey>
+    <consumerSecret>t/JQXkK6F5VtTCaCvVGYpXBBGPdiC2rX</consumerSecret>
+    <executionUser>tapankbadajena@gmail.com</executionUser>
+    <friendlyName>Linkedin</friendlyName>
+    <providerType>LinkedIn</providerType>
+    <registrationHandler>AutocreatedRegHandler1458230409795</registrationHandler>
+    <tokenUrl>https://www.linkedin.com/uas/oauth2/accessToken</tokenUrl>
+</AuthProvider>

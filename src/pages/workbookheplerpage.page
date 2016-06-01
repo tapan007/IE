@@ -1,0 +1,37 @@
+<apex:page controller="workbookhelpercls"  cache="true">
+   
+<apex:repeat value="{!lstfieldnamebysobjectname}" var="sobject"> 
+<br/>
+     <span style="font-size: 24px;text-transform: capitalize;"> {!sobject} </span>
+     <br/>
+      <table>
+      <thead>
+      <tr>
+        <th >Field Label</th>
+        <th >Api Name</th>
+        <th >Field Type</th>
+        <th>Field isCustom</th>
+        <th>Field isAccessible</th>
+        <th>Field isUpadtable</th>
+      </tr>
+      </thead>
+      <tbody>
+      <apex:repeat value="{!lstfieldnamebysobjectname[sobject]}" var="field">
+      
+          <tr>
+             <td>{!field.label}</td>
+             <td>{!field.name}</td>
+             <td>{!field.fieldtype}</td>
+             <td>{!field.isCustom}</td>
+             <td>{!field.isAccessible}</td>
+             <td>{!field.isUpdateable}</td>
+         </tr>
+        
+     </apex:repeat>
+     </tbody>
+     </table>
+     
+ 
+ </apex:repeat>
+ 
+</apex:page>

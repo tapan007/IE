@@ -1,0 +1,58 @@
+<apex:page >
+<head>
+<!-- <script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.ui/1.8.10/jquery-ui.min.js"></script> -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.min.css"/>
+</head>
+
+<apex:includeScript value="{!URLFOR($Resource.jQueryPlugin,  'js/jquery-1.7.1-jquery.min.js')}"/>
+<!--  <apex:includeScript value="{!URLFOR($Resource.select2,  'select2/select2.js')}"/> -->
+<!--  <apex:stylesheet value="{!URLFOR($Resource.select2,  'select2/select2.css')}"/> -->
+
+<!-- Begin Default Content REMOVE THIS -->
+<h1>Congratulations</h1>
+This is your new Page
+<!-- End Default Content REMOVE THIS -->
+
+<input id="REMOTE" type="text"/>
+<input id="ausschluss" type="hidden"  name="input"/>
+
+<script>
+//alert('hi');
+//$(document).ready(function() {
+$("#ausschluss").select2({
+            minimumInputLength: 2,
+            multiple: false,
+            placeholder: "Pick Account",
+            ajax: {
+                url: "/apex/ajaxHelper",
+                dataType: 'json',
+                data: function (term, page) {
+                    return {
+                        q: term,
+                        page_limit: 50
+                    };
+                },
+                results: function (data, page) {
+                
+                    return { results: data };
+                }
+            },
+            allowClear: true,
+            formatSelection: function(data) { 
+               return data.text; 
+            }
+        });
+        
+   // });
+
+
+
+
+
+
+    
+    
+</script>
+</apex:page>

@@ -1,0 +1,12 @@
+<apex:page standardController="Contact">
+  <script>
+      alert('{!contact.Zendesk__Last_Sync_Date__c}');
+      var datet = '{!(TEXT(contact.Zendesk__Last_Sync_Date__c))}';
+      var datett = new Date('{!contact.Zendesk__Last_Sync_Date__c}');
+      alert(datett.getMonth());
+      alert(datet);
+      alert(datett);
+     
+      
+  </script>
+</apex:page>

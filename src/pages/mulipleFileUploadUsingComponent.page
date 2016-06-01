@@ -1,0 +1,3 @@
+<apex:page >
+	<c:MulipleFileUpload parentId="003i000000WJTw5" supportedFileType="htm,csv"/>
+</apex:page>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplicationComponent xmlns="http://soap.sforce.com/2006/04/metadata">
+    <buttonIconUrl>https://tapan1-dev-ed.my.salesforce.com/resource/1415980492000/gift</buttonIconUrl>
+    <buttonWidth>35</buttonWidth>
+    <isHeightFixed>false</isHeightFixed>
+    <isHidden>true</isHidden>
+    <isWidthFixed>false</isWidthFixed>
+    <visualforcePage>ApplicationPage</visualforcePage>
+</CustomApplicationComponent>

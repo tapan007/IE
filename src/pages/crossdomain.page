@@ -1,0 +1,109 @@
+<apex:page applyHtmlTag="false" showHeader="false">
+<html  >
+<head>
+    <title>Ajax Currency Convertor</title>
+
+     <apex:includeScript value="{!URLFOR($Resource.jQueryPlugin,  'js/jquery-1.7.1-jquery.min.js')}"/>
+     <script>
+     /*jQuery.support.cors = true;
+     $(document).ready(function() {
+            var surl = "//localhost:8080/mywebproject/NewFile.html";
+            $.ajax({
+                type: 'GET',
+                url: surl,
+                 beforeSend : function(xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer 00Di0000000ipfN!AQwAQOj.2R1pZM5xotmW74S19euN.DqR1nu2fopIsieO4CLMePztsmmObtIQ_qSgTTFXfk794eyvNEBtMhvaYpT5BCjQU8O5");
+                   xhr.setRequestHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+                   xhr.setRequestHeader("X-PINGOTHER");
+                  },
+                crossDomain: true,
+                success: function(msg) {
+                     alert(msg);
+                                   },
+                error: function(xhr, status, error) { alert('Servidor de error 404 !!'+error); },
+                async: false,
+                cache: false
+            });
+        });*/
+        
+        
+        function initiateConversion()
+{
+    xmlhttprequest = createRequestObject();
+    var url = "http://www.webservicex.net/CurrencyConvertor.asmx/ConversionRate?FromCurrency=?FromCurrency="
++ document.getElementById("FromBox").value
++ "&ToCurrency="
++ document.getElementById("ToBox").value ;
+    xmlhttprequest.open("GET", url, true);
+    xmlhttprequest.onreadystatechange = getData;
+    xmlhttprequest.send(null);
+}
+
+function createRequestObject() 
+{
+        if (window.XMLHttpRequest) 
+        {
+                return xmlhttprequest = new XMLHttpRequest(); 
+        } 
+      else if (window.ActiveXObject) 
+      {  
+            return xmlhttprequest = new ActiveXObject("Microsoft.XMLHTTP"); 
+      } 
+}
+function getData() 
+{
+  if ((xmlhttprequest.readyState == 4) &&( xmlhttprequest.status == 200))
+  {
+    var myXml = xmlhttprequest.responseXML;
+    var xmlobject = null;
+    var XMLText = null;
+    if (window.ActiveXObject)
+    {
+        XMLText = myXml.childNodes[1].firstChild.nodeValue; 
+    }
+    else
+    {
+        XMLText = myXml.childNodes[0].firstChild.nodeValue;
+    }
+    
+    var table = document.getElementById("table1");
+    var row = table.insertRow(table.rows.length);
+    var tablecell = row.insertCell(row.cells.length);
+    tablecell.appendChild(document.createTextNode
+(document.getElementById("FromBox").value
++ " to "
++ document.getElementById("ToBox").value));
+    var tablecell = row.insertCell(row.cells.length);
+    tablecell.appendChild(document.createTextNode(XMLText));
+    table.setAttribute("border", "2");
+  } 
+}
+        </script>
+  <!-- Begin Default Content REMOVE THIS -->
+  
+
+</head>
+<body>
+Currency To Convert From:
+<select id="FromBox">
+<option value="USD" selected="true">USD - U.S. Dollar</option>
+<option value="GBP">GBP - British Pound</option>
+<option value="EUR">EUR - Euro</option>
+<option value="JPY">JPY - Japanese Yen</option>
+</select>
+Currency To Convert To:
+<select id="ToBox">
+<option value="USD">USD - U.S. Dollar</option>
+<option value="GBP" selected="true">GBP - British Pound</option>
+<option value="EUR">EUR - Euro</option>
+<option value="JPY">JPY - Japanese Yen</option>
+</select>
+<br /><br />
+<input id="button1" type="button" value="Click to convert currency"
+onclick="initiateConversion()" />
+<br /><br />
+<table id="table1">
+</table>
+</body>
+</html>
+</apex:page>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ConnectedApp xmlns="http://soap.sforce.com/2006/04/metadata">
+    <contactEmail>tapankbadajena@gmail.com</contactEmail>
+    <iconUrl>https://login.salesforce.com/logos/Standard/contact/icon.png</iconUrl>
+    <label>mobiletst</label>
+    <oauthConfig>
+        <callbackUrl>http://localhost/home.php</callbackUrl>
+        <certificate>MIIEUjCCAzqgAwIBAgIOAVOVCZvUAAAAABSNDGAwDQYJKoZIhvcNAQELBQAwdDEMMAoGA1UEAwwDSldUMRgwFgYDVQQLDA8wMERpMDAwMDAwMGlwZk4xFzAVBgNVBAoMDlNhbGVzZm9yY2UuY29tMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMQswCQYDVQQIDAJDQTEMMAoGA1UEBhMDVVNBMB4XDTE2MDMyMDE3MTkwOFoXDTE3MDMyMDEyMDAwMFowdDEMMAoGA1UEAwwDSldUMRgwFgYDVQQLDA8wMERpMDAwMDAwMGlwZk4xFzAVBgNVBAoMDlNhbGVzZm9yY2UuY29tMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMQswCQYDVQQIDAJDQTEMMAoGA1UEBhMDVVNBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsu1JPB2ql4kD+Ol9GWQJwHwf6CzXfahiSa0y+PMchEWsKlaJ/LUh9/GV590o78s4BBo6sIDzjWFZjtBIFrBo7s3knM4au89O4v/TElIQA7kTH8gFqjmTMwKMbAJ+ht1l1qgxZCeGko8oEsI8myjWuv83PswJp73E5jAzTWS2dIJWjOhQt7OqAMqMprPPsEJWRD1Ny8IveXzMfdcHXQcQ7cD/8uZF1qZA85Q9xwvC50+bcag4P2ZTf0KD81IRqCYAFumdXX3fj0e5cEO+MblC61rNVJ4xq8uayETN2dLEEWc3d0KwoviGtxSxQ9DmpycwSicgGwWDoJxGrbn6GFy4OwIDAQABo4HhMIHeMB0GA1UdDgQWBBQAHr5vO5o5ytrgS3M6BP66cSUI6TAPBgNVHRMBAf8EBTADAQH/MIGrBgNVHSMEgaMwgaCAFAAevm87mjnK2uBLczoE/rpxJQjpoXikdjB0MQwwCgYDVQQDDANKV1QxGDAWBgNVBAsMDzAwRGkwMDAwMDAwaXBmTjEXMBUGA1UECgwOU2FsZXNmb3JjZS5jb20xFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xCzAJBgNVBAgMAkNBMQwwCgYDVQQGEwNVU0GCDgFTlQmb1AAAAAAUjQxgMA0GCSqGSIb3DQEBCwUAA4IBAQALb9aDTnpmXrAFXdh0AaNcXizhNPt/LzSOWNq1J/e1fr1hh6Bw8kKl2qpETJ7j+7duWbCgvThjNf8u6aHOOEfuHptkRoUAMxCyAupyzeS0Wrd6kBwXxpUN1wFasUlZxQUlsNUg2vMQG2+Pdy5ItDAdLZtmm2biV8DTBN8OcePJD4EA2WNk4gL8LJhJUObcVtWRxT3yD4+sitO7io+Lcs7GZQTFSZqRwezrAJRKM/slgA+3ov6adyp284xM97FTHlQthg0ag7/3KcjDXPYY9bO2w6zYJ+jKMsyFN53wrOHV6wC13qcei5AkcQVQyjPpZQEXy1t9YnTWF2P/9TtocE/X</certificate>
+        <consumerKey>3MVG9A2kN3Bn17htN67yMJAt6UuK4LcqJq53N9Gp46IhM09CjsWZn2KTYaBlFJHCP4sbcAqIfbdhRpAJyLo.w</consumerKey>
+        <scopes>Basic</scopes>
+        <scopes>Api</scopes>
+        <scopes>Web</scopes>
+        <scopes>Full</scopes>
+        <scopes>Chatter</scopes>
+        <scopes>CustomApplications</scopes>
+        <scopes>RefreshToken</scopes>
+        <scopes>OpenID</scopes>
+        <scopes>CustomPermissions</scopes>
+        <scopes>Wave</scopes>
+    </oauthConfig>
+</ConnectedApp>

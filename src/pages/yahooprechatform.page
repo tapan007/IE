@@ -1,0 +1,142 @@
+<apex:page showHeader="false"> 
+<!-- This script takes the endpoint URL parameter passed from the deployment 
+  page and makes it the action for the form -->
+<script type="text/javascript">
+     (function() { 
+     function handlePageLoad() {
+       var endpointMatcher = new RegExp("[\\?\\&]endpoint=([^&#]*)");
+       //alert(decodeURIComponent(endpointMatcher.exec(document.location.search)[1]));
+       document.getElementById('prechatForm').setAttribute('action',
+       decodeURIComponent(endpointMatcher.exec(document.location.search)[1]));
+     } if (window.addEventListener) {
+              window.addEventListener('load', handlePageLoad, false);
+   } else { window.attachEvent('onload', handlePageLoad, false);
+              }})(); 
+</script>
+<h1>Pre-chat Form in Yahoo side</h1> 
+<script>
+function populateSfValue(){
+    document.getElementById('fname').value = document.getElementById('yfname').value;
+    document.getElementById('lname').value = document.getElementById('ylname').value;
+    document.getElementById('email').value = document.getElementById('yemail').value;
+    document.getElementById('yid').value = document.getElementById('yyid').value;
+    document.getElementById('phone').value = document.getElementById('yphone').value;
+    document.getElementById('subject').value = document.getElementById('ysubject').value;
+    document.getElementById('status').value = document.getElementById('ystatus').value;
+    document.getElementById('product').value = document.getElementById('yproduct').value;
+    document.getElementById('category').value = document.getElementById('ycategory').value;
+    document.getElementById('locale').value = document.getElementById('ylocale').value;
+    document.getElementById('orgin').value = document.getElementById('yorgin').value;
+   document.getElementById("prechatForm").submit();
+}
+</script>
+<form>
+    <br/>
+    <h1>Yahoo prechatForm </h1><br/><br/>
+     First name: <input type='text'  name='liveagent.prechat:FirstNameDetail'
+        id='yfname' /><br />
+      Last name: <input type='text' name='liveagent.prechat:LastNameDetail'
+        id='ylname' />
+      Email : <input type='text' name='liveagent.prechat:contactEmail'
+        id='yemail' /><br />
+      Yahoo Id : <input type='text' name='liveagent.prechat:yid'
+        id='yyid' /><br />
+      Phone number : <input type='text' name='liveagent.prechat:phone'
+        id='yphone' /><br />
+      Case Subject : <input type='text' name='liveagent.prechat:caseSubject'
+      id='ysubject' /><br />
+      Case Status : <input type='text' name='liveagent.prechat:status'
+      id='ystatus' /><br />
+      Proudct 1 : <input type='text' name='liveagent.prechat:productref'
+      id='yproduct' value="441" style="display:none"/><br />
+      Category L3 : <input type='text' name='liveagent.prechat:catref'
+      id='ycategory' value="453" style="display:none"/><br />
+      Locale : <input type='text' name='liveagent.prechat:locale'
+      id='ylocale' /><br />
+      Origin : <input type='text' name='liveagent.prechat:origin'
+      id='yorgin' /><br />
+      <input type="button" onclick="populateSfValue();return false;" value="start chat"/>
+</form>
+
+<form method='post' id='prechatForm'> 
+
+        <br/>
+        <br/>
+      <div>
+      <h1>SF prechatForm </h1><br/>
+      <br/>
+      First name: <input type='text'  name='liveagent.prechat:FirstNameDetail'
+        id='fname' /><br />
+      Last name: <input type='text' name='liveagent.prechat:LastNameDetail'
+        id='lname' />
+      Email : <input type='text' name='liveagent.prechat:contactEmail'
+        id='email' /><br />
+      Yahoo Id : <input type='text' name='liveagent.prechat:yid'
+        id='yid' /><br />
+      Phone number : <input type='text' name='liveagent.prechat:phone'
+        id='phone' /><br />
+      Case Subject : <input type='text' name='liveagent.prechat:caseSubject'
+      id='subject' /><br />
+      Case Status : <input type='text' name='liveagent.prechat:status'
+      id='status' /><br />
+      Proudct 1 : <input type='text' name='liveagent.prechat:productref'
+      id='product' value="441" /><br />
+      Category L3 : <input type='text' name='liveagent.prechat:catref'
+      id='category' value="453" /><br />
+      Locale : <input type='text' name='liveagent.prechat:locale'
+      id='locale' /><br />
+      Origin : <input type='text' name='liveagent.prechat:origin'
+      id='orgin' /><br />
+      
+      
+      <!-- Map liveagent.prechat:FirstNameDetail and liveagent.prechat:LastNameDetail
+        custom detail to Contact's field FirstName and LastName -->
+       <input type="hidden" name="liveagent.prechat.findorcreate.map:Contact"
+        value="FirstName,FirstNameDetail;LastName,LastNameDetail;Email,contactEmail;Yahoo_Id__c,yid;Phone,phone;" /> 
+        
+      <!-- Specify to query for a matching Contact records email field based on
+        the value of email -->
+      <input type="hidden" name="liveagent.prechat.findorcreate.map.doFind:Contact"
+        value="Email,true" />
+
+      <!-- Return results only if there is an exact match of FirstName -->
+      <input type="hidden" name="liveagent.prechat.findorcreate.map.isExactMatch:Contact"
+        value="Email,true" />
+
+      <!-- If no match in search, create a new Contact record with the mapped value
+        of firstname and last name -->
+        
+      <input type="hidden" name="liveagent.prechat.findorcreate.map.doCreate:Contact"
+        value="FirstName,true;LastName,true;Email,true;Yahoo_Id__c,true;Phone,true;" />
+
+      <!-- If a new Contact record has been created, open it as a subtab -->
+      <input type="hidden" name="liveagent.prechat.findorcreate.showOnCreate:Contact"
+        value="true" />
+
+      <!-- Save the Contact id to transcript's field ContactId -->
+      <input type="hidden" name="liveagent.prechat.findorcreate.saveToTranscript:Contact"
+        value="ContactId" />
+        
+      <input type= "hidden" name= "liveagent.prechat.findorcreate.linkToEntity: Case" value= "Contact,ContactId" />
+      
+      
+<!--      //for case -->
+      
+       <input type="hidden" name="liveagent.prechat.findorcreate.map:Case"
+        value="Status,status;Subject,caseSubject;Locale__c,locale;Origin,origin;Product_Ref_Id__c,productref;CategoryLevel3RefId__c,catref;" /> 
+      
+      
+       <input type="hidden" name="liveagent.prechat.findorcreate.map.doCreate:Case"
+        value="Status,true;Subject,true;Locale__c,true;Origin,true;Product_Ref_Id__c,true;CategoryLevel3RefId__c,true;" />
+
+      <!-- If a new Contact record has been created, open it as a subtab -->
+      <input type="hidden" name="liveagent.prechat.findorcreate.showOnCreate:Case"
+        value="true" />
+        
+      <input type='submit' value='Request Chat' id='prechat_submit'/> 
+      </div>
+<style type="text/css"> 
+p {font-weight: bolder } 
+</style> 
+</form> 
+</apex:page>

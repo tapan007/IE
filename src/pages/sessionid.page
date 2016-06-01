@@ -1,0 +1,21 @@
+<apex:page >
+  <!-- Begin Default Content REMOVE THIS -->
+  <h1>Congratulations</h1>
+  This is your new Page
+  <!-- End Default Content REMOVE THIS -->
+<script>
+binding = new SforceService();
+binding.Timeout = 60000; // One minute timeout
+binding.Url = endpoint;
+binding.SessionHeaderValue = new SessionHeader();
+binding.SessionHeaderValue.sessionId = 'sessionId';
+try {
+    GetUserInfoResult result = binding.getUserInfo();
+} catch (UnexpectedErrorFault uef) {
+    if (uef.ExceptionCode == ExceptionCode.INVALID_SESSION_ID) {
+        // Re-authenticate the user
+        alert('invlalid');
+    }
+}
+</script>
+</apex:page>

@@ -1,0 +1,29 @@
+<apex:page standardController="Case">
+
+<script type="text/javascript" src="/canvas/sdk/js/30.0/controller.js"/>
+
+
+<apex:form >
+
+ <apex:canvasApp developerName="Test_canvas"  canvasId="abcd" />
+ 
+ <script>
+ 
+Sfdc.canvas.controller.subscribe({name : 'mynamespace.statusChanged',onData : function (e) {
+alert(e.status);
+
+
+Sfdc.canvas.publisher.publish({name: 'publisher.setActionInputValues', 
+         payload: {
+            actionName: 'Case.Email',
+            emailFields: { body: { value: e.status}}
+         }});
+
+}
+}
+);
+                                  
+</script>
+<apex:includeScript value="/canvas/sdk/js/30.0/publisher.js"/>
+</apex:form> 
+</apex:page>

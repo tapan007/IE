@@ -1,0 +1,15 @@
+<apex:page controller="SMENetworkCont" showHeader="false">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+    $("iframe").load(function() {
+        alert($(this).contents().html());
+        var t=$(this).contents().find("header");
+        alert(t);
+        $(t).css("display","none");
+    });
+});
+</script>
+<iframe src="https://tapan1-dev-ed--c.na15.visual.force.com/_ui/core/chatter/ui/ChatterPage" id="chatterPage" width="800" height="800">
+</iframe>
+</apex:page>

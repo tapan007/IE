@@ -1,0 +1,436 @@
+<apex:component controller="mulipleFileuploadRA" >
+    <apex:attribute name="supportedFileType" type="String"
+        description="give file type extn  with comma separated eg. html,csv"
+        default="*" />
+    <apex:attribute name="maxmumFileSize" type="Integer"
+        description="maxmum file size in bytes" default="15728640" />
+    <apex:attribute name="parentId" type="String"
+        description="Parent Id for attachment" required="true" />
+    <apex:attribute name="message" type="String"
+        description="extra message need to be shown in box" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+
+    <style>
+        #dragandrophandler
+        {
+          border: 2px dotted #0B85A1;
+          width: 600px;
+          color: #92AAB0;
+          text-align: center;
+          vertical-align: middle;
+          padding: 20px 10px !important;
+          margin-bottom: 10px;
+          font-size: 200%;
+          cursor: pointer;
+        }
+        .viewUrl{
+            color: #337ab7;
+        }
+        .error{
+            color:red;
+            display:inline-block;
+        }
+        .progressBar {
+            width: 200px;
+            height: 22px;
+            border: 1px solid #ddd;
+            border-radius: 5px; 
+            overflow: hidden;
+            display:inline-block;
+            margin:0px 10px 5px 5px;
+            vertical-align:top;
+        }
+        .progressBar div {
+            height: 100%;
+            color: #fff;
+            text-align: right;
+            line-height: 22px; /* same as #progressBar height if we want text middle aligned */
+            width: 0;
+            background-color: #0ba1b5; border-radius: 3px; 
+        }
+        .statusbar
+        {
+            border-top:1px solid #A9CCD1;
+            min-height:25px;
+            width:700px;
+            padding:10px 10px 0px 10px;
+            vertical-align:top;
+        }
+        .statusbar:nth-child(odd){
+            background:#EBEFF0;
+        }
+        .filename
+        {
+            display:inline-block;
+            vertical-align:top;
+            width:250px;
+        }
+        .filesize
+        {
+            display:inline-block;
+            vertical-align:top;
+            color:#30693D;
+            width:100px;
+            margin-left:10px;
+            margin-right:5px;
+        }
+        .abort{
+            background-color:#A8352F;
+            -moz-border-radius:4px;
+            -webkit-border-radius:4px;
+            border-radius:4px;display:inline-block;
+            color:#fff;
+            font-family:arial;font-size:13px;font-weight:normal;
+            padding:4px 15px;
+            cursor:pointer;
+            vertical-align:top
+        }
+    </style>
+    
+    <!--    html content  -->
+    
+    <br/>
+    <br/>
+    <input type="file" id="file" style="display:none;" multiple="true"/>
+    <div id="dragandrophandler">
+        Drag &amp; Drop Files Here or Click here to upload
+        <br/>
+        <br/>
+        <span style="font-size: 50% !important;">{!message}</span>
+    </div>
+    <br/><br/>
+    <div id="status1"></div>
+    <script>
+        var maxStringSize = 6000000;    //Maximum String size is 6,000,000 characters
+        var maxFileSize = {!maxmumFileSize};      //After Base64 Encoding, this is the max file size 4350000
+        var CHUNK_SIZE = 180000;
+        var MAX_FILE_SIZE_REMOTE = 400000; //size upto which remote action is valid
+        var VIEW_URL = '/servlet/servlet.FileDownload?file=';
+        var SUPPORTED_FILE = '{!supportedFileType}';
+        var parentId  = '{!parentId}';
+        
+        function processForUpload(currentFile,status){
+            
+            var byteChunkArray = new Array();  
+            //First check to see if file size is less than the chunk size, if so first and only chunk is entire size of file
+            if(currentFile.size <= CHUNK_SIZE){
+                byteChunkArray[0] = '0-' + (currentFile.size - 1);
+            }else{
+                //Determine how many whole byte chunks make up the file,
+                var numOfFullChunks = Math.floor(currentFile.size / CHUNK_SIZE); //i.e. 1.2MB file would be 1000000 / CHUNK_SIZE
+                var remainderBytes = currentFile.size % CHUNK_SIZE; // would determine remainder of 1200000 bytes that is not a full chunk
+                var startByte = 0;
+                var endByte = CHUNK_SIZE - 1;
+                
+                //Loop through the number of full chunks and build the byteChunkArray array
+                for(i = 0; i < numOfFullChunks; i++){
+                    byteChunkArray[i] = startByte+'-'+endByte;
+                    
+                    //Set new start and stop bytes for next iteration of loop
+                    startByte = endByte + 1;
+                    endByte += CHUNK_SIZE;
+                }
+                
+                //Add the last chunk of remaining bytes to the byteChunkArray
+                startByte = currentFile.size - remainderBytes;
+                endByte = currentFile.size;
+                byteChunkArray.push(startByte+'-'+endByte);
+            }
+            console.log('byteChunkArray'+byteChunkArray[0]);
+            //Start processing the byteChunkArray for the current file, parameter is '' because this is the first chunk being uploaded and there is no attachment Id
+            processByteChunkArray(currentFile,byteChunkArray,status,'');
+        }
+
+      function processByteChunkArray(currentFile,byteChunkArray,status,attachmentId){
+      
+        if(byteChunkArray.length > 0){
+            console.log('byteChunkArray[0]'+byteChunkArray[0]);
+            //Determine the byte range that needs to uploaded, if byteChunkArray is like... ['0-179999','180000-359999']
+            var indexes = byteChunkArray[0].split('-'); //... get the first index range '0-179999' -> ['0','179999']
+            var startByte = parseInt(indexes[0]); //0
+            var stopByte = parseInt(indexes[1]); //179999
+            
+            //Slice the part of the file we want to upload, currentFile variable is set in checkForUploads() method that is called before this method
+            if (currentFile.slice) {
+                var blobChunk = currentFile.slice(startByte , stopByte + 1);
+             }else if(currentFile.webkitSlice){
+                var blobChunk = currentFile.webkitSlice(startByte , stopByte + 1);
+                
+            }else if (currentFile.mozSlice) {
+                var blobChunk = currentFile.mozSlice(startByte , stopByte + 1);
+            }
+            console.log('blobChunk'+blobChunk);
+            //Create a new reader object, part of HTML5 File API
+            var reader = new FileReader();
+        
+            //Read the blobChunk as a binary string, reader.onloadend function below is automatically called after this line
+           // reader.readAsBinaryString(blobChunk);
+            
+            reader.readAsArrayBuffer(blobChunk);
+            //Above code is for the support of IE 10 and above versions
+            //Create a reader.onload function, this will execute immediately after reader.readAsBinaryString() function above;
+            reader.onloadend = function(evt){ 
+                
+                if(evt.target.readyState == FileReader.DONE){ //Make sure read was successful, DONE == 2
+                    //Base 64 encode the data for transmission to the server with JS remoting, window.btoa currently on support by some browsers
+                    var binary = "";
+                    var bytes = new Uint8Array(evt.target.result);
+                    var length = bytes.byteLength;
+                    
+                    for (var i = 0; i < length; i++) 
+                    {
+                        binary += String.fromCharCode(bytes[i]);
+                    }
+
+                    
+                    var base64value = window.btoa(binary );
+                    
+                    //Use js remoting to send the base64 encoded chunk for uploading
+                    mulipleFileuploadRA.attachBlob(parentId,attachmentId,currentFile.name,currentFile.type,base64value,'description',function(result,event){
+            
+                        //Proceed if there were no errors with the remoting call
+                        if(event.status == true){
+                            //Update the percent of the status bar and percent, first determine percent complete
+                            var percentComplete = Math.round((stopByte / currentFile.size) * 100);
+                            status.setProgress(percentComplete);
+                             //Set the attachmentId of the file we are now processing
+                            attachmentId = result;
+                            if(percentComplete == 100){
+                                 console.log('before setViewURL'+attachmentId);
+                                 status.setViewURL(attachmentId);
+                                 status.setDelete(attachmentId);
+                            }
+                            
+                            //Remove the index information from the byteChunkArray array for the piece just uploaded.
+                            byteChunkArray.shift(); //removes 0 index
+                             
+                           
+                                                
+                            //Call process byteChunkArray to upload the next piece of the file
+                            processByteChunkArray(currentFile,byteChunkArray,status,attachmentId);
+        
+                        }else{
+                            console.log(event.message);
+                            status.setFail(event.message);
+                            
+                        }
+                    }); 
+                }else{
+                    //Error handling for bad read
+                    status.setFail('Could not read file');
+                }
+            };
+            
+        } 
+    }   
+       
+    function sendFileToServer(currenetFile,status)
+    {
+        var uploadURL ="/services/data/v30.0/sobjects/Attachment"; //end point for Attachment upload
+        var reader = new FileReader();
+        //Read the blobChunk as a binary string, reader.onloadend function below is automatically called after this line
+        // reader.readAsBinaryString(blobChunk);
+        reader.readAsArrayBuffer(currenetFile);
+         //Above code is for the support of IE 10 and above versions
+         //Create a reader.onload function, this will execute immediately after reader.readAsBinaryString() function above;
+        reader.onloadend = function(evt){ 
+             
+            if(evt.target.readyState == FileReader.DONE){ //Make sure read was successful, DONE == 2
+                 //Base 64 encode the data for transmission to the server with JS remoting, window.btoa currently on support by some browsers
+                var binary = "";
+                var bytes = new Uint8Array(evt.target.result);
+                var length = bytes.byteLength;
+                for (var i = 0; i < length; i++) 
+                {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+                var jqXHR=$.ajax({
+                    xhr: function() {
+                     var xhrobj = $.ajaxSettings.xhr();
+                     if (xhrobj.upload) {
+                             xhrobj.upload.addEventListener('progress', function(event) {
+                                 var percent = 0;
+                                 var position = event.loaded || event.position;
+                                 var total = event.total;
+                                 if (event.lengthComputable) {
+                                     percent = Math.ceil(position / total * 100);
+                                 }
+                                 //Set progress
+                                 status.setProgress(percent);
+                             }, false);
+                         }
+                     return xhrobj;
+                    },
+                    url: uploadURL,
+                    type: "POST",
+                    contentType:'application/json',
+                    beforeSend: function (request)
+                             {
+                                 request.setRequestHeader("Authorization", 'Bearer '+'{!$Api.Session_ID}');
+                                 request.setRequestHeader("Content-Type", 'application/json');
+                             },
+                    processData: false,
+                    cache: false,
+                    data: '{ "name" : "'+currenetFile.name+'",  "parentId" : "'+ parentId +'","body" : "'+window.btoa(binary ) +'", "ContentType" : "'+currenetFile.type+ '"}',
+                    success: function(data){
+                           status.setProgress(100);
+                            status.setViewURL(data.id);
+                           status.setDelete(data.id);
+                    },
+                   error: function (xhr, ajaxOptions, thrownError) {
+                        console.log('xhr.responseText'+xhr.responseText);
+                        var responseMessage =JSON.parse(xhr.responseText);
+                        status.setFail(responseMessage[0].errorCode);
+                    }
+                }); 
+            }
+         
+             
+         }
+      
+    }
+
+    var rowCount=0;
+    function createStatusbar(obj)
+    {
+        rowCount++;
+        var row="odd";
+        if(rowCount %2 ==0) row ="even";
+        this.statusbar = $("<div class='statusbar "+row+"'></div>");
+        this.filename = $("<div class='filename'></div>").appendTo(this.statusbar);
+        this.size = $("<div class='filesize'></div>").appendTo(this.statusbar);
+        this.progressBar = $("<div class='progressBar'><div></div></div>").appendTo(this.statusbar);
+        obj.after(this.statusbar);
+        this.setFileNameSize = function(name,size)
+        {
+            var sizeStr="";
+            var sizeKB = size/1024;
+            if(parseInt(sizeKB) > 1024)
+            {
+                var sizeMB = sizeKB/1024;
+                sizeStr = sizeMB.toFixed(2)+" MB";
+            }
+            else
+            {
+                sizeStr = sizeKB.toFixed(2)+" KB";
+            }
+    
+            this.filename.html(name);
+            this.size.html(sizeStr);
+        }
+        this.setViewURL = function(attachmentId){
+            console.log('this.filename'+this.filename.html());
+            this.filename.html('<a target="_blank" class="viewUrl" href="' +VIEW_URL+attachmentId+'" >'+ this.filename.text() +'</a>' );
+        }
+        this.setProgress = function(progress)
+        {       
+            var progressBarWidth =progress*this.progressBar.width()/ 100;  
+            this.progressBar.find('div').animate({ width: progressBarWidth }, 10).html(progress + "% ");
+        }
+        this.setFail = function(message){
+            //this.progressBar.find('div').addClass('failed').animate({ width: '100%' }, 10).html('Failed:' + message);
+            this.progressBar.replaceWith('<div class="error">Failed: ' + message +'</div>');
+        }
+        this.setDelete = function(attachmentId){
+            var sb = this.statusbar;
+            this.remove = $("<div class='abort'>Remove</div>").appendTo(this.statusbar);
+            this.remove.click(function()
+            {
+                 console.log('Delete');
+                 mulipleFileuploadRA.deleteAtttachment(attachmentId,function(result,event){
+                
+                        if (event.status) {
+                            sb.remove();
+                        } else if (event.type === 'exception') {
+                            alert(event.message);
+                        } else {
+                            alert(event.message);
+                        }
+                 }); 
+            });
+        }
+    }
+    function handleFileUpload(files,obj)
+    {
+      
+       for (var i = 0; i < files.length; i++) 
+       {
+            var fd = new FormData();
+            fd.append('file', files[i]);
+    
+            var status = new createStatusbar(obj); //Using this we can set progress.
+            status.setFileNameSize(files[i].name,files[i].size);
+            var fileExtension = files[i].name.split(".").pop();
+            if(SUPPORTED_FILE == '*' || SUPPORTED_FILE.indexOf(fileExtension) > -1){
+                if(files[i].size <= maxFileSize){
+                    if(files[i].size<= MAX_FILE_SIZE_REMOTE){
+                    processForUpload(files[i],status);
+                    }else{
+                        sendFileToServer(files[i],status);
+                    }
+                }else{
+                    status.setFail('Maximum Size in Bytes '+maxFileSize);
+                }
+                
+            }else{
+                status.setFail('Only '+SUPPORTED_FILE+' are supported');
+            }
+            
+    
+       }
+    }
+    $(document).ready(function()
+    {
+        var obj = $("#dragandrophandler");
+        obj.on('dragenter', function (e) 
+        {
+            
+            e.stopPropagation();
+            e.preventDefault();
+            $(this).css('border', '2px solid #0B85A1');
+        });
+        obj.on('dragover', function (e) 
+        {
+             e.stopPropagation();
+             e.preventDefault();
+        });
+        obj.on('click', function (e) 
+        {
+             $('#file').click();
+        });
+        obj.on('drop', function (e) 
+        {
+            
+             $(this).css('border', '2px dotted #0B85A1');
+             e.preventDefault();
+             var files = e.originalEvent.dataTransfer.files;
+             
+        
+             //We need to send dropped files to Server
+             handleFileUpload(files,obj);
+        });
+        $(document).on('dragenter', function (e) 
+        {
+            e.stopPropagation();
+            e.preventDefault();
+        });
+        $(document).on('dragover', function (e) 
+        {
+          e.stopPropagation();
+          e.preventDefault();
+          obj.css('border', '2px dotted #0B85A1');
+        });
+        $(document).on('drop', function (e) 
+        {
+            e.stopPropagation();
+            e.preventDefault();
+        });
+        $('#file').on('change', function (e) 
+        {
+          console.log('hanlde file log');
+          handleFileUpload($('#file').prop("files"),obj);
+        });
+    
+    });
+    </script>
+</apex:component>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ConnectedApp xmlns="http://soap.sforce.com/2006/04/metadata">
+    <canvasConfig>
+        <accessMethod>Post</accessMethod>
+        <canvasUrl>https://localhost/login.php</canvasUrl>
+        <locations>Chatter</locations>
+        <locations>Visualforce</locations>
+        <locations>Aura</locations>
+        <locations>Publisher</locations>
+        <locations>ChatterFeed</locations>
+        <locations>ServiceDesk</locations>
+        <locations>OpenCTI</locations>
+        <locations>MobileNav</locations>
+        <locations>PageLayout</locations>
+    </canvasConfig>
+    <contactEmail>tapan006@gmail.com</contactEmail>
+    <label>Test canvas</label>
+    <oauthConfig>
+        <callbackUrl>https://tapansite-developer-edition.ap1.force.com/atn</callbackUrl>
+        <consumerKey>3MVG9A2kN3Bn17htN67yMJAt6Ulaj3twH0s0BKQm2zLwRZMqdUev1NjOwV4DHCXDqtrxiN9cdZguEbMlqyIBG</consumerKey>
+        <scopes>Full</scopes>
+    </oauthConfig>
+</ConnectedApp>

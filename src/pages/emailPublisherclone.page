@@ -1,0 +1,30 @@
+<apex:page standardController="Case" showHeader="false" docType="html-5.0" sidebar="false">
+ <apex:includeScript value="{!URLFOR($Resource.jQueryPlugin,  'js/jquery-1.7.1-jquery.min.js')}"/>
+ <script type='text/javascript' src='/canvas/sdk/js/publisher.js'/>
+ 
+ <input type="button" title="Email" value="Email" class="emailBtn" 
+                        onclick="emailArticle();"/>
+                        <div id="emailpub">
+                <apex:emailPublisher id="myEmailPublisher" 
+                    entityId="{!case.id}" 
+                    width="600px"
+                    emailBodyFormat="textAndHTML"
+                    title="Send an Email"
+                    expandableHeader="true"
+                    autoCollapseBody="false"
+                    showAdditionalFields="false"
+                    fromVisibility="selectable"
+                    toVisibility="editable"
+                    bccVisibility="hidden" 
+                    ccVisibility="hidden"
+                    enableQuickText="true"
+                    emailBody=""
+                    subject=""
+                    toAddresses=""
+                    onSubmitFailure="alert('failed');"
+                     submitFunctionName="alert('hi');"
+                    fromAddresses="person1@mycompany.com,person2@mycompany.com"
+                />  
+                </div>
+     
+            </apex:page>

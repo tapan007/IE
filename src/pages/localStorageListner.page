@@ -1,0 +1,42 @@
+<apex:page docType="html-5.0" showHeader="false" sidebar="false">
+  
+<html>
+<head>
+    <script type="text/javascript">
+    alert(localStorage.getItem('ab'));
+    
+    
+    function storage_handler(evt)
+{
+    /*alert('The modified key was '+evt.key);
+    alert('The original value was '+evt.oldValue);
+    alert('The new value is '+evt.newValue);
+    alert('The URL of the page that made the change was '+evt.url);
+    alert('The window where the change was made was '+evt.source);*/
+    document.getElementById('hello1').value =  localStorage.getItem('ab');
+}
+   
+</script>
+</head>
+<body>
+    <form id="form1" >
+    new vlaue:  
+    <input type="text" id="hello1"/>
+
+
+</form>
+<script type="text/javascript">
+document.getElementById('hello1').value =  localStorage.getItem('ab')
+    window.onload = function (){
+    //alert('hi');
+    window.addEventListener('storage', storage_handler, false);
+    //alert('bind');
+    }
+   
+</script>
+
+    
+</body>
+
+</html>
+</apex:page>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>This is the default email alert template invitation to the Survey: TEST TIMBAS</description>
+    <encodingKey>UTF-8</encodingKey>
+    <name>[Send using Workflow Leads] TEST TIMBAS</name>
+    <style>none</style>
+    <subject>Please complete this survey: TEST TIMBAS</subject>
+    <textOnly>Please complete this survey at:&lt;br/&gt;http://tapan1-developer-edition.na15.force.com/timbasurveys__survey?id=a0oi0000004jthJAAQ&amp;lId={!Lead.Id}&amp;wf=yes</textOnly>
+    <type>custom</type>
+</EmailTemplate>

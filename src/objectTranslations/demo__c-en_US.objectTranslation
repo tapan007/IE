@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>demo</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>demos</value>
+    </caseValues>
+    <fields>
+        <label><!-- TestFromSVN --></label>
+        <name>TestSVN__c</name>
+    </fields>
+    <fields>
+        <label><!-- TestFromSVN --></label>
+        <name>Test__c</name>
+    </fields>
+    <fields>
+        <label><!-- encryp --></label>
+        <name>encryp__c</name>
+    </fields>
+    <fields>
+        <label><!-- link --></label>
+        <name>link__c</name>
+    </fields>
+    <fields>
+        <label><!-- testing --></label>
+        <name>testing__c</name>
+        <picklistValues>
+            <masterLabel>a</masterLabel>
+            <translation><!-- a --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>b</masterLabel>
+            <translation><!-- b --></translation>
+        </picklistValues>
+    </fields>
+    <layouts>
+        <layout>demo Layout</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+    </layouts>
+    <recordTypes>
+        <label><!-- hello2 --></label>
+        <name>hello2</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- heloo --></label>
+        <name>heloo</name>
+    </recordTypes>
+    <sharingReasons>
+        <label><!-- Test --></label>
+        <name>Test</name>
+    </sharingReasons>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>
