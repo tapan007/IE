@@ -296,12 +296,12 @@
                 </else>
             </if> 
             <preparedeployment 
-                diffLogFolder="@{rootdir}/${svn.ant.difflog.fld.name}"
+                diffLogFolder="@{rootdir}/${git.ant.difflog.fld.name}"
                 sfusername = "@{sfusername}"
                 sfpassword = "@{sfpassword}"
                 sfloginUrl = "@{sfloginUrl}"
-                packageXmlFolder="@{rootdir}/${svn.packagexml.fld.name}"
-                deploymentFolderPath="@{rootdir}/${svn.sf.deployment.fld.name}"/>
+                packageXmlFolder="@{rootdir}/${git.packagexml.fld.name}"
+                deploymentFolderPath="@{rootdir}/${git.sf.deployment.fld.name}"/>
 
         </sequential>
        
@@ -318,7 +318,7 @@
             sfloginUrl="${sf.login.url}"             
             endpointForBuildRecord = "${sf.buildrecord.endpoint}"
             endpointForBuildAttachment = "${sf.attachment.endpoint}" 
-            rootdir = "${git.src}" />
+            rootdir = "${git.salesforce.root.dir}" />
           
     </target>
     
