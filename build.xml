@@ -272,13 +272,20 @@
              </else>
             </if>
             
-            <echo>***preparing package xml*** </echo>
+            <echo>${line.separator} ***preparing package xml*** </echo>
             
             <preparepackagexml svnDiffLogUrl="@{diffLogFolder}/${git.difflog.name}"
                                packageXmlUrl="@{packageXmlFolder}"/>
             
+            <echo>***load package xml folder @{packageXmlFolder}/${sf.deploycodepkg.fld.name}/${packagexml.name} *** </echo>
+            <loadfile property="packagexml" 
+                                  srcFile="@{packageXmlFolder}/${sf.deploycodepkg.fld.name}/${packagexml.name}"  failonerror="false"/>
+
+            <echo>${line.separator} ***load package xml folder  **** ${line.separator}</echo>
+            <echo>${line.separator} ${packagexml} ${line.separator} </echo>
             
             
+             
         </sequential>
     </macrodef>
    
