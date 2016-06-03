@@ -283,6 +283,12 @@
 
             <echo>${line.separator} ***load package xml folder  **** ${line.separator}</echo>
             <echo>${line.separator} ${packagexml} ${line.separator} </echo>
+            <echo>***load desturctive package xml folder @{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name} *** </echo>
+            <loadfile property="desctucitvepackagexml" 
+                                  srcFile="@{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name}"  failonerror="false"/>
+
+            <echo>${line.separator} ***load destrucitve package xml folder  **** ${line.separator}</echo>
+            <echo>${line.separator} ${desctucitvepackagexml} ${line.separator} </echo>
             
             
              
