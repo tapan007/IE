@@ -26,6 +26,15 @@
     <!-- Define xmltask to parse xml and add node to xml etc. -->
     <taskdef name="xmltask" 
              classname="com.oopsconsultancy.xmltask.ant.XmlTask" classpath="${ant.xmltask.jar}"/>
+    
+        <!-- Define custom prepartepackagexml task to create package xml from svn change log-->
+    <taskdef name="preparepackagexml" 
+             classname="CreatePackgeXML" classpath="${ant.svnsalesforce.jar}"/>
+    
+    
+    <!-- Define custom copyfiles task to prepare deployment folder from svn using package xml-->
+    <taskdef name="copyfiles" 
+             classname="CopyFilesUsingPackageXML" classpath="${ant.svnsalesforce.jar}"/>
  
     <!-- Login into Salesforce and return the session Id and serverUrl using http task-->
     <macrodef name="login">
@@ -241,6 +250,12 @@
                 </length>
             </condition>
             <!-- call the java code to prepare package xml from diff log-->
+            
+            
+            <echo>***preparing package xml*** </echo>
+            
+            <preparepackagexml svnDiffLogUrl="@{diffLogFolder}/${git.difflog.name}"
+                               packageXmlUrl="@{packageXmlFolder}"/>
             
             <if>
              <equals arg1="${fs.length.empty}" arg2="true" />
