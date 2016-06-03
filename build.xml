@@ -240,6 +240,10 @@
                 <arg line="--name-status"/>
                 <arg line="${start.revision}"/>
                 <arg line="${end.revision}"/>
+                <arg line="--"/>
+                <arg line="${git.src}"/>
+                
+                 
        
             </exec>
          
@@ -250,13 +254,6 @@
                 </length>
             </condition>
             <!-- call the java code to prepare package xml from diff log-->
-            
-            
-            <echo>***preparing package xml*** </echo>
-            
-            <preparepackagexml svnDiffLogUrl="@{diffLogFolder}/${git.difflog.name}"
-                               packageXmlUrl="@{packageXmlFolder}"/>
-            
             <if>
              <equals arg1="${fs.length.empty}" arg2="true" />
              <then>
@@ -274,6 +271,13 @@
                 <!-- end -->
              </else>
             </if>
+            
+            <echo>***preparing package xml*** </echo>
+            
+            <preparepackagexml svnDiffLogUrl="@{diffLogFolder}/${git.difflog.name}"
+                               packageXmlUrl="@{packageXmlFolder}"/>
+            
+            
             
         </sequential>
     </macrodef>
