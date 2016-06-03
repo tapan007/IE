@@ -29,12 +29,12 @@
     
         <!-- Define custom prepartepackagexml task to create package xml from svn change log-->
     <taskdef name="preparepackagexml" 
-             classname="CreatePackgeXML" classpath="${ant.svnsalesforce.jar}"/>
+             classname="CreatePackgeXML" classpath="${ant.git.salesforce.incremental.jar}"/>
     
     
     <!-- Define custom copyfiles task to prepare deployment folder from svn using package xml-->
     <taskdef name="copyfiles" 
-             classname="CopyFilesUsingPackageXML" classpath="${ant.svnsalesforce.jar}"/>
+             classname="CopyFilesUsingPackageXML" classpath="${ant.git.salesforce.incremental.jar}"/>
  
     <!-- Login into Salesforce and return the session Id and serverUrl using http task-->
     <macrodef name="login">
@@ -235,7 +235,7 @@
             <!-- getting diff log from git beween two version using svn commandline "-->
             <echo> ${line.separator} *** Geting the git change log between ${start.revision} and ${end.revision} ***</echo>
             
-            <exec executable="git"  output="@{diffLogFolder}/${git.difflog.name}" failonerror="true">
+            <exec executable="git"  output="@{diffLogFolder}/${git.difflog.name}" >
                 <arg line="diff"/>
                 <arg line="--name-status"/>
                 <arg line="${start.revision}"/>
