@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Build Detail</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Build Details</value>
+    </caseValues>
+    <fields>
+        <label><!-- Application Version --></label>
+        <name>ApplicationVersion__c</name>
+    </fields>
+    <fields>
+        <label><!-- Description --></label>
+        <name>Description__c</name>
+    </fields>
+    <fields>
+        <label><!-- SVN Revision End --></label>
+        <name>SVNRevisionEnd__c</name>
+    </fields>
+    <fields>
+        <label><!-- SVN Revision Start --></label>
+        <name>SVNRevisionStart__c</name>
+    </fields>
+    <layouts>
+        <layout>Build Detail Layout</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+    </layouts>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

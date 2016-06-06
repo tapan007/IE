@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataCategoryGroup xmlns="http://soap.sforce.com/2006/04/metadata">
+    <active>true</active>
+    <dataCategory>
+        <dataCategory>
+            <label>Late 50’s/early 60’s</label>
+            <name>Late_50_s_early_60_s</name>
+        </dataCategory>
+        <dataCategory>
+            <label>Futuristic</label>
+            <name>Futuristic</name>
+        </dataCategory>
+        <dataCategory>
+            <label>Grunge</label>
+            <name>Grunge</name>
+        </dataCategory>
+        <dataCategory>
+            <label>Old Hollywood</label>
+            <name>Old_Hollywood</name>
+        </dataCategory>
+        <dataCategory>
+            <label>The 80&apos;s</label>
+            <name>The_80_s</name>
+        </dataCategory>
+        <dataCategory>
+            <label>French Chic</label>
+            <name>French_Chic</name>
+        </dataCategory>
+        <dataCategory>
+            <label>Flashy Disco</label>
+            <name>Flashy_Disco</name>
+        </dataCategory>
+        <dataCategory>
+            <label>Gothic</label>
+            <name>Gothic</name>
+        </dataCategory>
+        <dataCategory>
+            <label>Rockers</label>
+            <name>Rockers</name>
+        </dataCategory>
+        <label>All</label>
+        <name>All</name>
+    </dataCategory>
+    <label>Fashions</label>
+    <objectUsage>
+        <object>KnowledgeArticleVersion</object>
+        <object>Question</object>
+    </objectUsage>
+</DataCategoryGroup>

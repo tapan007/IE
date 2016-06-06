@@ -1,0 +1,11 @@
+<apex:page standardController="sugoisurvey4__Session__c" extensions="sugoisurvey4.session_v2,sugoisurvey4.jr_session" readOnly="true" showHeader="false" standardStylesheets="false" applyhtmlTag="false" applyBodyTag="false" docType="html-5.0">
+
+<html>
+<head>
+    <script>
+        window.location = '/apex/sugoisurvey4__survey';
+    </script>
+</head>
+
+</html>
+</apex:page>

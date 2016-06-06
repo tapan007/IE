@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataCategoryGroup xmlns="http://soap.sforce.com/2006/04/metadata">
+    <active>true</active>
+    <dataCategory>
+        <dataCategory>
+            <label>Online store</label>
+            <name>Online_store</name>
+        </dataCategory>
+        <dataCategory>
+            <dataCategory>
+                <label>San Francisco</label>
+                <name>San_Francisco</name>
+            </dataCategory>
+            <dataCategory>
+                <label>New-York</label>
+                <name>New_York</name>
+            </dataCategory>
+            <label>US</label>
+            <name>US</name>
+        </dataCategory>
+        <dataCategory>
+            <dataCategory>
+                <label>Hong-Kong</label>
+                <name>Hong_Kong</name>
+            </dataCategory>
+            <dataCategory>
+                <label>Tokyo</label>
+                <name>Tokyo</name>
+            </dataCategory>
+            <label>Asia</label>
+            <name>Asia</name>
+        </dataCategory>
+        <dataCategory>
+            <dataCategory>
+                <label>Paris</label>
+                <name>Paris</name>
+            </dataCategory>
+            <dataCategory>
+                <label>London</label>
+                <name>London</name>
+            </dataCategory>
+            <label>Europe</label>
+            <name>Europe</name>
+        </dataCategory>
+        <label>All</label>
+        <name>All</name>
+    </dataCategory>
+    <label>Stores</label>
+    <objectUsage>
+        <object>KnowledgeArticleVersion</object>
+    </objectUsage>
+</DataCategoryGroup>

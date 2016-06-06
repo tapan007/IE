@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Translations xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customLabels>
+        <label>Acción</label>
+        <name>Action</name>
+    </customLabels>
+    <customLabels>
+        <label>Agente</label>
+        <name>Agent</name>
+    </customLabels>
+    <customLabels>
+        <label>Seudónimo</label>
+        <name>Alias</name>
+    </customLabels>
+    <customLabels>
+        <label>Lista anónima</label>
+        <name>AnonymousList</name>
+    </customLabels>
+    <customLabels>
+        <label>Atrás</label>
+        <name>Back</name>
+    </customLabels>
+    <customLabels>
+        <label>Llamada</label>
+        <name>Call</name>
+    </customLabels>
+    <customLabels>
+        <label>Llamar a contacto específico</label>
+        <name>CallSpecific</name>
+    </customLabels>
+    <customLabels>
+        <label>Campaña</label>
+        <name>Campaign</name>
+    </customLabels>
+    <customLabels>
+        <label>Lista de transferencia vacía</label>
+        <name>ErrorLabel</name>
+    </customLabels>
+    <customLabels>
+        <label>Teléfono</label>
+        <name>Phone</name>
+    </customLabels>
+    <customLabels>
+        <label>Grupo</label>
+        <name>Pool</name>
+    </customLabels>
+    <customLabels>
+        <label>Buscar</label>
+        <name>Search</name>
+    </customLabels>
+    <customLabels>
+        <label>Mostrar todos los resultados</label>
+        <name>Showall</name>
+    </customLabels>
+    <customLabels>
+        <label>Mostrar 10 más</label>
+        <name>Showmore</name>
+    </customLabels>
+    <customLabels>
+        <label>Tipo</label>
+        <name>Type</name>
+    </customLabels>
+    <customPageWebLinks>
+        <label><!-- Server Settings --></label>
+        <name>Server_Settings</name>
+    </customPageWebLinks>
+</Translations>

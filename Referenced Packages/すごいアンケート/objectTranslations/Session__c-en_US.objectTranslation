@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Survey</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Surveys</value>
+    </caseValues>
+    <fields>
+        <label>Yield Rate</label>
+        <name>Attending_Guest_Percentage__c</name>
+    </fields>
+    <fields>
+        <label>Number of guest (Attended)</label>
+        <name>Attending_Guest_Sum__c</name>
+    </fields>
+    <fields>
+        <label>Email for Chatter Reply</label>
+        <name>Chatter_Email__c</name>
+    </fields>
+    <fields>
+        <label>Date</label>
+        <name>Date__c</name>
+    </fields>
+    <fields>
+        <label>Overview</label>
+        <name>Description__c</name>
+    </fields>
+    <fields>
+        <label>Enable Rating</label>
+        <name>Enable_Rate__c</name>
+    </fields>
+    <fields>
+        <label>Event ID</label>
+        <name>Event_Id__c</name>
+    </fields>
+    <fields>
+        <label>Number of guest</label>
+        <name>Guest_Sum__c</name>
+    </fields>
+    <fields>
+        <label>Password for Handout</label>
+        <name>Handout_Password__c</name>
+    </fields>
+    <fields>
+        <label>Handout Download URL</label>
+        <name>Handout_URL__c</name>
+    </fields>
+    <fields>
+        <label>Hash Tag</label>
+        <name>Hash_Tag__c</name>
+    </fields>
+    <fields>
+        <label>Label for Rating</label>
+        <name>Label_For_Rate__c</name>
+    </fields>
+    <fields>
+        <label>Body for Mail</label>
+        <name>Mail_Body_L__c</name>
+    </fields>
+    <fields>
+        <label>Body for Mail</label>
+        <name>Mail_Body__c</name>
+    </fields>
+    <fields>
+        <label>Body for Guest Pass Delivery Mail</label>
+        <name>Mail_Guest_Pass_Body_L__c</name>
+    </fields>
+    <fields>
+        <label>Body for Guest Pass Delivery Mail</label>
+        <name>Mail_Guest_Pass_Body__c</name>
+    </fields>
+    <fields>
+        <label>Sender for Guest Pass Delivery Mail</label>
+        <name>Mail_Guest_Pass_Sender__c</name>
+    </fields>
+    <fields>
+        <label>Subject for Guest Pass Delivery Mail</label>
+        <name>Mail_Guest_Pass_Subject__c</name>
+    </fields>
+    <fields>
+        <label>To for Guest Pass Delivery Mail</label>
+        <name>Mail_Guest_Pass_To__c</name>
+        <picklistValues>
+            <masterLabel>anyone</masterLabel>
+            <translation><!-- anyone --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label>Body for Handout Delivery Mail</label>
+        <name>Mail_Handout_Body_L__c</name>
+    </fields>
+    <fields>
+        <label>Body Email for Handout Delivery Mail</label>
+        <name>Mail_Handout_Body__c</name>
+    </fields>
+    <fields>
+        <label>Send on Survey Submission</label>
+        <name>Mail_Handout_Send_On_Submission__c</name>
+    </fields>
+    <fields>
+        <label>Sender for Handout Delivery Mail</label>
+        <name>Mail_Handout_Sender__c</name>
+    </fields>
+    <fields>
+        <label>Subject for Handout Delivery Mail</label>
+        <name>Mail_Handout_Subject__c</name>
+    </fields>
+    <fields>
+        <label>To for Handout Delivery Mail</label>
+        <name>Mail_Handout_To__c</name>
+        <picklistValues>
+            <masterLabel>anyone</masterLabel>
+            <translation><!-- anyone --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>attendees</masterLabel>
+            <translation><!-- attendees --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>who_have_submitted_survey</masterLabel>
+            <translation><!-- who_have_submitted_survey --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label>Sender for Mail</label>
+        <name>Mail_Sender__c</name>
+    </fields>
+    <fields>
+        <label>Subject for Mail</label>
+        <name>Mail_Subject__c</name>
+    </fields>
+    <fields>
+        <label>Body for Survey Link Delivery Mail</label>
+        <name>Mail_Survey_Link_Body_L__c</name>
+    </fields>
+    <fields>
+        <label>Body for Survey Link Delivery Mail</label>
+        <name>Mail_Survey_Link_Body__c</name>
+    </fields>
+    <fields>
+        <label>Sender for Survey Link Delivery Mail</label>
+        <name>Mail_Survey_Link_Sender__c</name>
+    </fields>
+    <fields>
+        <label>Subject for Survey Link Delivery Mail</label>
+        <name>Mail_Survey_Link_Subject__c</name>
+    </fields>
+    <fields>
+        <label>To for Survey Link Delivery Mail</label>
+        <name>Mail_Survey_Link_To__c</name>
+        <picklistValues>
+            <masterLabel>anyone</masterLabel>
+            <translation><!-- anyone --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>attendees</masterLabel>
+            <translation><!-- attendees --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label>To for Mail</label>
+        <name>Mail_To__c</name>
+        <picklistValues>
+            <masterLabel>anyone</masterLabel>
+            <translation><!-- anyone --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>attendees</masterLabel>
+            <translation><!-- attendees --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>who_have_submitted_survey</masterLabel>
+            <translation><!-- who_have_submitted_survey --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label>Body for Handout Delivery Mail</label>
+        <name>Mass_Mail_Additional_Body__c</name>
+    </fields>
+    <fields>
+        <label>Sender Email for Handout Mail</label>
+        <name>Mass_Mail_Sender__c</name>
+    </fields>
+    <fields>
+        <label>Title for Handout Delivery Mail</label>
+        <name>Mass_Mail_Title__c</name>
+    </fields>
+    <fields>
+        <label>Open</label>
+        <name>Open__c</name>
+    </fields>
+    <fields>
+        <help><!-- チェックするとゲストが入力したコメントがアンケートのレコードフィードに投稿されます。投稿者はすごいアンケートをを組織にインストールした管理者になります。 --></help>
+        <label>Post comment to survey record feed</label>
+        <name>Post_Comment_To_Session_Record_Feed__c</name>
+    </fields>
+    <fields>
+        <help><!-- チェックすると、ゲストが登録された時またはアンケートを回答した時に、そのゲストに該当する取引先レコードがあれば、そのレコードフィードに活動が投稿されます。 --></help>
+        <label>Post guest&apos;s activity to Account Feed</label>
+        <name>Post_To_Account_Record_Feed__c</name>
+    </fields>
+    <fields>
+        <help><!-- チェックすると、ゲストが登録された時またはアンケートを回答した時に、そのゲストに該当する取引先責任者レコードがあれば、そのレコードフィードに活動が投稿されます。 --></help>
+        <label>Post guest&apos;s activity to Contact Feed</label>
+        <name>Post_To_Contact_Record_Feed__c</name>
+    </fields>
+    <fields>
+        <label>Presenter</label>
+        <name>Presenter__c</name>
+        <relationshipLabel>Event</relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Rate 1 --></label>
+        <name>Rate_1__c</name>
+    </fields>
+    <fields>
+        <label><!-- Rate 2 --></label>
+        <name>Rate_2__c</name>
+    </fields>
+    <fields>
+        <label><!-- Rate 3 --></label>
+        <name>Rate_3__c</name>
+    </fields>
+    <fields>
+        <label><!-- Rate 4 --></label>
+        <name>Rate_4__c</name>
+    </fields>
+    <fields>
+        <label><!-- Rate 5 --></label>
+        <name>Rate_5__c</name>
+    </fields>
+    <fields>
+        <label>Avg of Rate</label>
+        <name>Rate_Avg__c</name>
+    </fields>
+    <fields>
+        <label>Number of Rate</label>
+        <name>Rate_Count__c</name>
+    </fields>
+    <fields>
+        <label>Sum of Rate</label>
+        <name>Rate_Sum__c</name>
+    </fields>
+    <fields>
+        <label>Report is public</label>
+        <name>Report_Public__c</name>
+    </fields>
+    <fields>
+        <label>Send Mail on Survey Submittion</label>
+        <name>Send_Mail_On_Submittion__c</name>
+    </fields>
+    <fields>
+        <label>Percentage of submitted survey</label>
+        <name>Survey_Collection_Rate__c</name>
+    </fields>
+    <fields>
+        <label>Number of submitted survey</label>
+        <name>Survey_Sum__c</name>
+    </fields>
+    <fields>
+        <label>Who is delivered handout</label>
+        <name>Who_Can_Get_Handout__c</name>
+        <picklistValues>
+            <masterLabel>アンケートの入力が必要</masterLabel>
+            <translation><!-- アンケートの入力が必要 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>全員</masterLabel>
+            <translation><!-- 全員 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>出席者</masterLabel>
+            <translation><!-- 出席者 --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label>Who can submit survey</label>
+        <name>Who_Can_Submit_Survey__c</name>
+        <picklistValues>
+            <masterLabel>Eメールの入力が必要</masterLabel>
+            <translation><!-- Eメールの入力が必要 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>事前登録者のみ</masterLabel>
+            <translation><!-- 事前登録者のみ --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>無条件</masterLabel>
+            <translation><!-- 無条件 --></translation>
+        </picklistValues>
+    </fields>
+    <layouts>
+        <layout>イベントレイアウト</layout>
+        <sections>
+            <label><!-- Chatter設定 --></label>
+            <section>Chatter設定</section>
+        </sections>
+        <sections>
+            <label><!-- カスタムリンク --></label>
+            <section>カスタムリンク</section>
+        </sections>
+        <sections>
+            <label><!-- メール配信設定 --></label>
+            <section>メール配信設定</section>
+        </sections>
+        <sections>
+            <label><!-- 旧メール設定 --></label>
+            <section>旧メール設定</section>
+        </sections>
+    </layouts>
+    <nameFieldLabel>Event Name</nameFieldLabel>
+    <quickActions>
+        <label><!-- アンケート質問 --></label>
+        <name>S1_act_new_question</name>
+    </quickActions>
+    <startsWith>Vowel</startsWith>
+    <webLinks>
+        <label>Copy Event</label>
+        <name>clone_session</name>
+    </webLinks>
+    <webLinks>
+        <label>Close Survey</label>
+        <name>close_survey</name>
+    </webLinks>
+    <webLinks>
+        <label>Delete Event</label>
+        <name>delete_session</name>
+    </webLinks>
+    <webLinks>
+        <label>Send Guest Pass</label>
+        <name>deliver_guest_pass</name>
+    </webLinks>
+    <webLinks>
+        <label>Mail</label>
+        <name>deliver_handout</name>
+    </webLinks>
+</CustomObjectTranslation>

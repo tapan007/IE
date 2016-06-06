@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="IETest" basedir="." xmlns:sf="antlib:com.salesforce">
+
+    <property file="default.properties"/>
+    
+	<property environment="env"/>
+    
+    
+    <!-- Define salesforce migration tool task  -->
+    <taskdef resource="com/salesforce/antlib.xml" uri="antlib:com.salesforce">
+        <classpath>
+            <pathelement location="ant-salesforce.jar" />
+        </classpath>
+    </taskdef>
+    
+    <!-- Define ant contib task to have complex logic like if else and for loop etc. -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml" 
+              classpath="${ant.contrib.jar}" />
+	
+    
+    <!-- Define ant http task to make http get and post to salesforce for data -->  
+	<taskdef name="http" 
+             classname="org.missinglink.ant.task.http.HttpClientTask" classpath="${ant.http.jar}"/> 
+    
+    
+    <!-- Define xmltask to parse xml and add node to xml etc. -->
+    <taskdef name="xmltask" 
+             classname="com.oopsconsultancy.xmltask.ant.XmlTask" classpath="${ant.xmltask.jar}"/>
+    
+        <!-- Define custom prepartepackagexml task to create package xml from svn change log-->
+    <taskdef name="preparepackagexml" 
+             classname="CreatePackgeXML" classpath="${ant.git.salesforce.incremental.jar}"/>
+    
+    
+    <!-- Define custom copyfiles task to prepare deployment folder from svn using package xml-->
+    <taskdef name="copyfiles" 
+             classname="CopyFilesUsingPackageXML" classpath="${ant.git.salesforce.incremental.jar}"/>
+ 
+    <!-- Login into Salesforce and return the session Id and serverUrl using http task-->
+    <macrodef name="login">
+        <attribute name="username" description="Salesforce user name."/>
+        <attribute name="password" description="Salesforce password."/>
+        <attribute name="serverurl" description="Server Url property."/>
+        <attribute name="sessionId" description="Session Id property."/>
+        <attribute name="loginUrl" description="Session Id property."/>
+        
+        <sequential>
+            
+            <!-- Obtain Session Id via Login SOAP service -->
+            <http url="@{loginUrl}" method="POST" failonunexpected="false"
+                entityProperty="loginResponse" statusProperty="loginResponseStatus" 
+                printrequestheaders="false" printresponseheaders="false" printrequest="false">
+                <headers>
+                    <header name="Content-Type" value="text/xml"/>
+                    <header name="SOAPAction" value="login"/>
+                </headers>
+                <entity>
+                    <![CDATA[
+                    <env:Envelope xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
+                        xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' 
+                        xmlns:env='http://schemas.xmlsoap.org/soap/envelope/'>
+                        <env:Body>
+                            <sf:login xmlns:sf='urn:enterprise.soap.sforce.com'>
+                                <sf:username>@{username}</sf:username>
+                                <sf:password>@{password}</sf:password>
+                            </sf:login>
+                        </env:Body>
+                    </env:Envelope>
+                    ]]>
+                </entity>
+            </http>
+            
+            <!-- Parse response -->
+            
+            <xmltask destbuffer="loginResponseBuffer">
+                <insert path="/">${loginResponse}</insert>
+            </xmltask>
+            <if>
+                <!-- Success? -->
+                <equals arg1="${loginResponseStatus}" arg2="200"/>
+                <then>
+                    <!-- Parse sessionId and serverUrl -->
+                    <xmltask sourcebuffer="loginResponseBuffer" failWithoutMatch="true">
+                        <copy path="/*[local-name()='Envelope']/*[local-name()='Body']/:loginResponse/:result/:sessionId/text()"
+                          property="@{sessionId}"/>
+                        <copy path="/*[local-name()='Envelope']/*[local-name()='Body']/:loginResponse/:result/:serverUrl/text()"
+                          property="@{serverUrl}"/>
+                    </xmltask>
+                </then>
+                <else>
+                    <!-- Parse login error message and fail build -->
+                    <xmltask sourcebuffer="loginResponseBuffer" failWithoutMatch="true">
+                        <copy 
+                          path="/*[local-name()='Envelope']/*[local-name()='Body']/*[local-name()='Fault']/*[local-name()='faultstring']/text()" 
+                          property="faultString"/>
+                    </xmltask>
+                    <fail message="${faultString}" />
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+    
+    
+    
+    
+    <!-- Provides access to the Salesforce REST API for a SOQL query -->
+    
+    <macrodef name="runQuery" description="Run database query">
+        <attribute name="sessionId" description="Salesforce user name."/>
+        <attribute name="serverUrl" description="Salesforce url."/>
+        <attribute name="query" description="Salesforce password."/>
+        <attribute name="queryResult" description="Query result property name"/>
+        <sequential>
+            <!-- Extract host/instance name from the serverUrl returned from the login response -->
+            <propertyregex property="host"
+              input="${serverUrl}"
+              regexp="^((http[s]?|ftp):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$"
+              select="\3"
+              casesensitive="false" />           
+            <!-- Execute Apex via REST API /query resource -->
+            <http url="https://${host}/services/data/v34.0/query" method="GET" 
+                  entityProperty="queryResultResponse" statusProperty="queryResponseStatus" 
+                  printrequestheaders="false"  printresponse="false" printrequest="false">
+                <headers>
+                    <header name="Authorization" value="Bearer ${sessionId}"/>
+                </headers>
+                <query>
+                    <parameter name="q" value="@{query}"/>
+                </query>
+            </http>
+            
+            <if>
+                <!-- Success -->
+                <equals arg1="${queryResponseStatus}" arg2="200"/>
+                <then>
+                   <property name="@{queryResult}" value="${queryResultResponse}"/>
+                </then>
+                <else>
+                    <fail message="${queryResultResponse}" />
+                </else>
+            </if>
+            
+        </sequential>
+    </macrodef>
+    
+    
+    
+    
+    <!-- Prepare deployment, check the svn diff log , prepare package xml from diff log and then copy files form svn -->
+    
+    <macrodef name="preparedeployment">
+   
+        <attribute name="diffLogFolder"  description="SVN Diff log folder"/>
+        <attribute name="packageXmlFolder" description="SVN Diff log folder"/>
+        <attribute name="deploymentFolderPath" description="Deployment folder path"/>
+        <attribute name="sfusername" description="Salesforce user name."/>
+        <attribute name="sfpassword" description="Salesforce password."/>
+        <attribute name="sfloginUrl" description="Salesforce login URL"/>
+   
+ 
+        <sequential>
+       
+            <!-- check the current git revision revision/version -->
+            <git command="rev-parse" outputproperty="end.revision" >
+                <args>
+                    <arg value="HEAD" />
+                </args>
+            </git>
+                       
+            <echo>${line.separator} *****Current commit id : ${end.revision}***** </echo>
+            
+            <echo>${line.separator} *****Connecting to Salesforce***** </echo>
+            <!-- login to salesforce  -->
+            <login username="@{sfusername}" password="@{sfpassword}" serverurl="serverUrl" sessionId="sessionId"
+                   loginUrl="@{sfloginUrl}"/>
+            
+            <echo>${line.separator} *** Conected to Salesforce **** </echo>
+            
+            <echo>${line.separator} *** Get the last commit id deployed to SF </echo>
+
+            <!-- SOQL to salesforce to get latest revision deployed to salesforce -->
+
+            <runQuery
+                sessionId="${sessionId}"
+                serverUrl="${serverUrl}"
+                queryResult="buildDetails"
+                query="SELECT Id, RevisionStart__c,RevisionEnd__c FROM BuildDetails__c  order by CreatedDate DESC LIMIT 1"/>
+
+            <!-- Parse JSON result via JavaScript eval -->
+            
+            <script language="javascript">
+                var response = eval('('+project.getProperty('buildDetails')+')');
+                if(response.records[0]){
+                    project.setProperty('start.revision', response.records[0].RevisionEnd__c);
+                }else{
+                    project.setProperty('is.lastcommit.id.not.found', true);
+                }
+            </script>
+            
+            <!-- check if the start revision set then take second last commit id -->
+            <echo> ${line.separator} *** start.revision ${start.revision} ***</echo>
+            <if>
+
+                <equals arg1="${is.lastcommit.id.not.found}" arg2="true"/>
+               
+                <then>
+                    <git command="log" outputproperty="start.revision" >
+                        <args>
+                            <arg value="-n" />
+                            <arg value="1" />
+                            <arg value="--skip" /> 
+                            <arg value="1" /> 
+                            <arg value="--pretty=format:%H" />  
+                        </args>
+                    </git>
+                </then>
+                <else>
+                   
+                </else>
+             </if>
+            
+      
+       
+            
+            <echo> ${line.separator} *** check for ${start.revision} and ${end.revision} ***</echo>
+     
+            <delete dir="@{packageXmlFolder}"/>
+            <delete dir="@{diffLogFolder}"/>
+            <delete dir="@{deploymentFolderPath}"/>
+            
+            <mkdir dir="@{packageXmlFolder}"/>
+            <mkdir dir="@{diffLogFolder}"/>
+            <mkdir dir="@{deploymentFolderPath}"/>
+            
+            <!-- getting diff log from git beween two version using svn commandline "-->
+            <echo> ${line.separator} *** Geting the git change log between ${start.revision} and ${end.revision} ***</echo>
+            
+            <exec executable="git"  output="@{diffLogFolder}/${git.difflog.name}" >
+                <arg line="diff"/>
+                <arg line="--name-status"/>
+                <arg line="${start.revision}"/>
+                <arg line="${end.revision}"/>
+                <arg line="--"/>
+                <arg line="${git.src}"/>
+                
+                 
+       
+            </exec>
+         
+            <echo>${line.separator} *****Diff change log created *******</echo>
+            
+            <condition property="fs.length.empty">
+                <length mode="all" when="eq" length="0" file="@{diffLogFolder}/${git.difflog.name}">
+                </length>
+            </condition>
+            <!-- call the java code to prepare package xml from diff log-->
+            <if>
+             <equals arg1="${fs.length.empty}" arg2="true" />
+             <then>
+               <echo message="${line.separator} ${line.separator}  *****There are no changes in Git for deployment*****" />
+             </then>
+             <else>
+                <!-- just for debuging we will delete the file--> 
+                <!-- start -->
+                <loadfile property="file" srcfile="@{diffLogFolder}/${git.difflog.name}"/>
+                 <for param="line" list="${file}" delimiter="${line.separator}">
+                      <sequential>
+                        <echo>@{line}</echo>
+                      </sequential>
+                 </for>
+                <!-- end -->
+             </else>
+            </if>
+            
+            <echo>${line.separator} ***preparing package xml*** </echo>
+            
+            <preparepackagexml svnDiffLogUrl="@{diffLogFolder}/${git.difflog.name}"
+                               packageXmlUrl="@{packageXmlFolder}"/>
+            
+            <echo>***load package xml folder @{packageXmlFolder}/${sf.deploycodepkg.fld.name}/${packagexml.name} *** </echo>
+            <loadfile property="packagexml" 
+                                  srcFile="@{packageXmlFolder}/${sf.deploycodepkg.fld.name}/${packagexml.name}"  failonerror="false"/>
+
+            <echo>${line.separator} ***load package xml folder  **** ${line.separator}</echo>
+            <echo>${line.separator} ${packagexml} ${line.separator} </echo>
+            <echo>***load desturctive package xml folder @{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name} *** </echo>
+            <loadfile property="desctucitvepackagexml" 
+                                  srcFile="@{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name}"  failonerror="false"/>
+
+            <echo>${line.separator} ***load destrucitve package xml folder  **** ${line.separator}</echo>
+            <echo>${line.separator} ${desctucitvepackagexml} ${line.separator} </echo>
+            
+            
+             
+        </sequential>
+    </macrodef>
+   
+    <macrodef name="deploytosf" description="it will deploy the code from CodeHub to Salesforce ">
+        <!-- Salsforce parameters -->
+        <attribute name="sfusername" description="Salesforce user name."/>
+        <attribute name="sfpassword" description="Salesforce password."/>
+        <attribute name="sfserverurl" description="Salesforce server  URL"/>
+        <attribute name="sfloginUrl" description="Salesforce login URL"/>
+        <attribute name="sessionId" description="Salesforce user name." default="${sessionId}"/>
+        <attribute name="endpointForBuildRecord" description="Buird record creation end point" />
+        <attribute name="endpointForBuildAttachment" description="Attachment creation end point" />
+        <!-- SVN Details parameters -->
+        <attribute name="gitlogcomment" description="login url" default="${git.log.comment}"/>
+        <attribute name="startrev" description="Salesforce password." default="${start.revision}"/>
+        <attribute name="endrev" description="Salesforce password." default ="${end.revision}"/>
+        <attribute name="rootdir"  description="Git Diff log folder"/>
+       
+        <sequential>
+           
+            <echo>${line.separator} ****Check for describe log avilability **** </echo>
+
+            <if>
+                <available file="${ant.external.lib}/${sf.describe.log.name}"/>
+                <then>
+                      <!-- Do nothing -->  
+                </then>
+                <else>
+                     <sf:describeMetadata
+                            username="@{sfusername}"
+                            password="@{sfpassword}"
+                            serverurl="@{sfserverurl}"
+                            resultFilePath="${ant.external.lib}/${sf.describe.log.name}"/>
+                </else>
+            </if> 
+            <preparedeployment 
+                diffLogFolder="@{rootdir}/${git.ant.difflog.fld.name}"
+                sfusername = "@{sfusername}"
+                sfpassword = "@{sfpassword}"
+                sfloginUrl = "@{sfloginUrl}"
+                packageXmlFolder="@{rootdir}/${git.packagexml.fld.name}"
+                deploymentFolderPath="@{rootdir}/${git.sf.deployment.fld.name}"/>
+
+        </sequential>
+       
+    </macrodef>
+    
+    
+    
+    <target name="deploy-to-sf-from-codehub" >      
+        
+        <deploytosf        
+            sfusername="${sf.username}"
+            sfpassword="${sf.password}" 
+            sfserverurl="${sf.serverurl}"
+            sfloginUrl="${sf.login.url}"             
+            endpointForBuildRecord = "${sf.buildrecord.endpoint}"
+            endpointForBuildAttachment = "${sf.attachment.endpoint}" 
+            rootdir = "${git.salesforce.root.dir}" />
+          
+    </target>
+    
+    <macrodef name="git">
+        <attribute name="command" />
+        <attribute name="outputproperty" default="dummy" />
+        <element name="args" optional="true" />
+        <sequential>
+
+            <echo message="git @{command}" />
+            <exec executable="git"  failonerror="true" outputproperty="@{outputproperty}">
+                <arg value="@{command}" />
+                <args/>
+            </exec>
+        </sequential>
+    </macrodef>
+    
+</project>

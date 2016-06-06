@@ -1,0 +1,2 @@
+<apex:page controller="LOCC_App.callCenterSettings" action="{!getCallCenter}">
+</apex:page>

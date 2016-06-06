@@ -11,11 +11,14 @@
     </packageVersions>
     <packageVersions>
         <majorNumber>1</majorNumber>
+<<<<<<< HEAD
         <minorNumber>91</minorNumber>
         <namespace>EasyDescribe</namespace>
     </packageVersions>
     <packageVersions>
         <majorNumber>1</majorNumber>
+=======
+>>>>>>> branch 'master' of https://github.com/tapan007/IE.git
         <minorNumber>4</minorNumber>
         <namespace>LOCC_App</namespace>
     </packageVersions>

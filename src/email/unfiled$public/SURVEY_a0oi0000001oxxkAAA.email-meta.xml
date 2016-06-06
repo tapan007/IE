@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>This is the default email invitation template for survey: demo123</description>
+    <encodingKey>UTF-8</encodingKey>
+    <name>[Send using Timba Surveys] demo123</name>
+    <style>none</style>
+    <subject>{!Case.Subject}</subject>
+    <textOnly>Please complete this survey at: http://tapan1-developer-edition.na15.force.com/timbasurveys__survey?cId={!Contact.Id}&amp;id=a0oi0000001oxxkAAA
+
+_____________________________________________________________________
+
+Surveys Made Easy by Timba Surveys
+ http://survey.timbasoftware.com</textOnly>
+    <type>custom</type>
+</EmailTemplate>

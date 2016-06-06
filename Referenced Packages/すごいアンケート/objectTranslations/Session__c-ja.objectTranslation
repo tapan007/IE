@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>すごいアンケート</value>
+    </caseValues>
+    <fields>
+        <label><!-- 歩留まり --></label>
+        <name>Attending_Guest_Percentage__c</name>
+    </fields>
+    <fields>
+        <label><!-- ゲスト数（出席） --></label>
+        <name>Attending_Guest_Sum__c</name>
+    </fields>
+    <fields>
+        <label><!-- Chatter用Eメールアドレス --></label>
+        <name>Chatter_Email__c</name>
+    </fields>
+    <fields>
+        <label><!-- 開催日 --></label>
+        <name>Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- 概要 --></label>
+        <name>Description__c</name>
+    </fields>
+    <fields>
+        <label><!-- 5段階評価を実施 --></label>
+        <name>Enable_Rate__c</name>
+    </fields>
+    <fields>
+        <label><!-- アンケートID --></label>
+        <name>Event_Id__c</name>
+    </fields>
+    <fields>
+        <label><!-- ゲスト数 --></label>
+        <name>Guest_Sum__c</name>
+    </fields>
+    <fields>
+        <label><!-- 資料開封パスワード --></label>
+        <name>Handout_Password__c</name>
+    </fields>
+    <fields>
+        <label><!-- 資料ダウンロードURL --></label>
+        <name>Handout_URL__c</name>
+    </fields>
+    <fields>
+        <label><!-- ハッシュタグ --></label>
+        <name>Hash_Tag__c</name>
+    </fields>
+    <fields>
+        <label><!-- 5段階評価のラベル --></label>
+        <name>Label_For_Rate__c</name>
+    </fields>
+    <fields>
+        <label><!-- メール 本文 --></label>
+        <name>Mail_Body_L__c</name>
+    </fields>
+    <fields>
+        <label><!-- deprecated メール 本文 --></label>
+        <name>Mail_Body__c</name>
+    </fields>
+    <fields>
+        <label><!-- 受講票配信メール 本文 --></label>
+        <name>Mail_Guest_Pass_Body_L__c</name>
+    </fields>
+    <fields>
+        <label><!-- deprecated 受講票配信メール 本文 --></label>
+        <name>Mail_Guest_Pass_Body__c</name>
+    </fields>
+    <fields>
+        <label><!-- 受講票配信メール 送信元 --></label>
+        <name>Mail_Guest_Pass_Sender__c</name>
+    </fields>
+    <fields>
+        <label><!-- 受講票配信メール 件名 --></label>
+        <name>Mail_Guest_Pass_Subject__c</name>
+    </fields>
+    <fields>
+        <label><!-- 受講票配信メール 配信先 --></label>
+        <name>Mail_Guest_Pass_To__c</name>
+        <picklistValues>
+            <masterLabel>anyone</masterLabel>
+            <translation><!-- anyone --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- 資料配信メール 本文 --></label>
+        <name>Mail_Handout_Body_L__c</name>
+    </fields>
+    <fields>
+        <label><!-- deprecatred 資料配信メール 本文 --></label>
+        <name>Mail_Handout_Body__c</name>
+    </fields>
+    <fields>
+        <label><!-- 資料配信メールをアンケート提出後に自動配信 --></label>
+        <name>Mail_Handout_Send_On_Submission__c</name>
+    </fields>
+    <fields>
+        <label><!-- 資料配信メール 送信元 --></label>
+        <name>Mail_Handout_Sender__c</name>
+    </fields>
+    <fields>
+        <label><!-- 資料配信メール 件名 --></label>
+        <name>Mail_Handout_Subject__c</name>
+    </fields>
+    <fields>
+        <label><!-- 資料配信メール 配信先 --></label>
+        <name>Mail_Handout_To__c</name>
+        <picklistValues>
+            <masterLabel>anyone</masterLabel>
+            <translation><!-- anyone --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>attendees</masterLabel>
+            <translation><!-- attendees --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>who_have_submitted_survey</masterLabel>
+            <translation><!-- who_have_submitted_survey --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- メール 送信元 --></label>
+        <name>Mail_Sender__c</name>
+    </fields>
+    <fields>
+        <label><!-- メール 件名 --></label>
+        <name>Mail_Subject__c</name>
+    </fields>
+    <fields>
+        <label><!-- アンケートリンク配信メール 本文 --></label>
+        <name>Mail_Survey_Link_Body_L__c</name>
+    </fields>
+    <fields>
+        <label><!-- deprecated アンケートリンク配信メール 本文 --></label>
+        <name>Mail_Survey_Link_Body__c</name>
+    </fields>
+    <fields>
+        <label><!-- アンケートリンク配信メール 送信元 --></label>
+        <name>Mail_Survey_Link_Sender__c</name>
+    </fields>
+    <fields>
+        <label><!-- アンケートリンク配信メール 件名 --></label>
+        <name>Mail_Survey_Link_Subject__c</name>
+    </fields>
+    <fields>
+        <label><!-- アンケートリンク配信メール 配信先 --></label>
+        <name>Mail_Survey_Link_To__c</name>
+        <picklistValues>
+            <masterLabel>anyone</masterLabel>
+            <translation><!-- anyone --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>attendees</masterLabel>
+            <translation><!-- attendees --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- メール 配信先 --></label>
+        <name>Mail_To__c</name>
+        <picklistValues>
+            <masterLabel>anyone</masterLabel>
+            <translation><!-- anyone --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>attendees</masterLabel>
+            <translation><!-- attendees --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>who_have_submitted_survey</masterLabel>
+            <translation><!-- who_have_submitted_survey --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Deprecated メール本文(HTML) --></label>
+        <name>Mass_Mail_Additional_Body__c</name>
+    </fields>
+    <fields>
+        <label><!-- Deprecated メール送信元アドレス --></label>
+        <name>Mass_Mail_Sender__c</name>
+    </fields>
+    <fields>
+        <label><!-- Deprecated メール題名 --></label>
+        <name>Mass_Mail_Title__c</name>
+    </fields>
+    <fields>
+        <label><!-- オープン --></label>
+        <name>Open__c</name>
+    </fields>
+    <fields>
+        <help><!-- チェックするとゲストが入力したコメントがアンケートのレコードフィードに投稿されます。投稿者はすごいアンケートをを組織にインストールした管理者になります。 --></help>
+        <label><!-- アンケートのレコードフィードにコメントを投稿 --></label>
+        <name>Post_Comment_To_Session_Record_Feed__c</name>
+    </fields>
+    <fields>
+        <help><!-- チェックすると、ゲストが登録された時またはアンケートを回答した時に、そのゲストに該当する取引先レコードがあれば、そのレコードフィードに活動が投稿されます。 --></help>
+        <label><!-- 取引先のレコードフィードにゲストの活動を投稿 --></label>
+        <name>Post_To_Account_Record_Feed__c</name>
+    </fields>
+    <fields>
+        <help><!-- チェックすると、ゲストが登録された時またはアンケートを回答した時に、そのゲストに該当する取引先責任者レコードがあれば、そのレコードフィードに活動が投稿されます。 --></help>
+        <label><!-- 取引先責任者のレコードフィードにゲストの活動を投稿 --></label>
+        <name>Post_To_Contact_Record_Feed__c</name>
+    </fields>
+    <fields>
+        <label><!-- プレゼンター --></label>
+        <name>Presenter__c</name>
+        <relationshipLabel><!-- Surveys --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Rate 1 --></label>
+        <name>Rate_1__c</name>
+    </fields>
+    <fields>
+        <label><!-- Rate 2 --></label>
+        <name>Rate_2__c</name>
+    </fields>
+    <fields>
+        <label><!-- Rate 3 --></label>
+        <name>Rate_3__c</name>
+    </fields>
+    <fields>
+        <label><!-- Rate 4 --></label>
+        <name>Rate_4__c</name>
+    </fields>
+    <fields>
+        <label><!-- Rate 5 --></label>
+        <name>Rate_5__c</name>
+    </fields>
+    <fields>
+        <label><!-- 評価平均 --></label>
+        <name>Rate_Avg__c</name>
+    </fields>
+    <fields>
+        <label><!-- 評価数 --></label>
+        <name>Rate_Count__c</name>
+    </fields>
+    <fields>
+        <label><!-- 評価合計 --></label>
+        <name>Rate_Sum__c</name>
+    </fields>
+    <fields>
+        <label><!-- レポートを公開する --></label>
+        <name>Report_Public__c</name>
+    </fields>
+    <fields>
+        <label><!-- deprecated アンケート提出後に自動送信 --></label>
+        <name>Send_Mail_On_Submittion__c</name>
+    </fields>
+    <fields>
+        <label><!-- アンケート回答率 --></label>
+        <name>Survey_Collection_Rate__c</name>
+    </fields>
+    <fields>
+        <label><!-- アンケート回答数 --></label>
+        <name>Survey_Sum__c</name>
+    </fields>
+    <fields>
+        <label><!-- deprecated メールを配信される人 --></label>
+        <name>Who_Can_Get_Handout__c</name>
+        <picklistValues>
+            <masterLabel>アンケートの入力が必要</masterLabel>
+            <translation><!-- アンケートの入力が必要 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>全員</masterLabel>
+            <translation><!-- 全員 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>出席者</masterLabel>
+            <translation><!-- 出席者 --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- アンケートを入力できる人 --></label>
+        <name>Who_Can_Submit_Survey__c</name>
+        <picklistValues>
+            <masterLabel>Eメールの入力が必要</masterLabel>
+            <translation><!-- Eメールの入力が必要 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>事前登録者のみ</masterLabel>
+            <translation><!-- 事前登録者のみ --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>無条件</masterLabel>
+            <translation><!-- 無条件 --></translation>
+        </picklistValues>
+    </fields>
+    <layouts>
+        <layout>イベントレイアウト</layout>
+        <sections>
+            <label><!-- Chatter設定 --></label>
+            <section>Chatter設定</section>
+        </sections>
+        <sections>
+            <label><!-- カスタムリンク --></label>
+            <section>カスタムリンク</section>
+        </sections>
+        <sections>
+            <label><!-- メール配信設定 --></label>
+            <section>メール配信設定</section>
+        </sections>
+        <sections>
+            <label><!-- 旧メール設定 --></label>
+            <section>旧メール設定</section>
+        </sections>
+    </layouts>
+    <nameFieldLabel>アンケート名</nameFieldLabel>
+    <quickActions>
+        <label><!-- アンケート質問 --></label>
+        <name>S1_act_new_question</name>
+    </quickActions>
+    <webLinks>
+        <label><!-- clone_session --></label>
+        <name>clone_session</name>
+    </webLinks>
+    <webLinks>
+        <label><!-- close_survey --></label>
+        <name>close_survey</name>
+    </webLinks>
+    <webLinks>
+        <label><!-- delete_session --></label>
+        <name>delete_session</name>
+    </webLinks>
+    <webLinks>
+        <label><!-- deliver_guest_pass --></label>
+        <name>deliver_guest_pass</name>
+    </webLinks>
+    <webLinks>
+        <label><!-- deliver_handout --></label>
+        <name>deliver_handout</name>
+    </webLinks>
+</CustomObjectTranslation>
