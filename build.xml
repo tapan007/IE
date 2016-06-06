@@ -290,6 +290,20 @@
             <echo>${line.separator} ***load destrucitve package xml folder  **** ${line.separator}</echo>
             <echo>${line.separator} ${desctucitvepackagexml} ${line.separator} </echo>
             
+            <if>
+                <available file="@{packageXmlFolder}/${sf.deploycodepkg.fld.name}/${packagexml.name}"/>
+                <then>
+                    <copyfiles srcUrl="${git.src}" destUrl="@{deploymentFolderPath}"
+                       packageXmlDir="@{packageXmlFolder}"/>
+                    <echo>${line.separator} Deployment folder created </echo>
+
+                </then>
+                <else>
+                    <echo>***Nothing found for deploy. Checking for undeploy *** </echo>
+                </else>
+            </if>
+            
+            
             
              
         </sequential>
