@@ -1,0 +1,109 @@
+<apex:page standardController="sugoisurvey4__Session__c" extensions="sugoisurvey4.session_v2,sugoisurvey4.jr_session" readOnly="true" showHeader="false" standardStylesheets="false" applyhtmlTag="false" applyBodyTag="false" docType="html-5.0">
+
+<html class="ng-app" id="ng-app">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+    <meta charset="utf-8"></meta>
+    <title>{!$label.sugoisurvey}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/css/bootstrap.min.css"></link>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script>
+</head>
+<body>
+
+<script type="text/javascript">
+function init($scope){
+	$scope.callback_error = function(message){
+    	$scope.rtk.submitting = false;
+    	$scope.rtk.result = 'error';
+    	$scope.rtk.message = message;
+		$scope.$apply();
+	}
+
+	$scope.start_init = function(){
+		$scope.rtk.action = 'start_init';
+		$scope.rtk.result = null;
+		$scope.rtk.message = '{!$label.start_init_inprogress}';
+		$scope.rtk.submitting = true;
+	    sugoisurvey4.jr_session.start_init("{!JSENCODE($CurrentPage.Url)}",
+	        function(result, event){
+	            if (event.status){
+	                $scope.assign_permission_set();
+	            } else {
+	            	$scope.callback_error(event.message);
+	            }
+	        },{escape:true}
+	    );
+	};
+	
+	$scope.assign_permission_set = function(){
+		$scope.rtk.message = '{!$label.assign_perm_set_inprogress}';
+		$scope.rtk.action = 'assign_permission_set';
+		$scope.$apply();
+	    sugoisurvey4.jr_session.assign_permission_set(
+	        function(result, event){
+	            if (event.status){
+	                $scope.finish_init();
+	            } else {
+                	$scope.callback_error(event.message);
+	            }
+	        },{escape:true}
+	    ); 
+	};
+	
+	$scope.finish_init = function(){
+		$scope.rtk.message = '{!$label.finish_init_inprogress}';
+		$scope.rtk.action = 'finish_init';
+		$scope.$apply();
+	    sugoisurvey4.jr_session.finish_init(
+	        function(result, event){
+	            if (event.status){
+                	$scope.rtk.message = '{!$label.init_completed} {!$label.redirecting_to_top_page}';
+                	$scope.$apply();
+                    if (typeof sforce == 'undefined'){
+						window.location = '/apex/sugoisurvey4__survey';
+					} else {
+						sforce.one.navigateToURL('/apex/sugoisurvey4__S1_survey');
+                	}
+	            } else {
+                	$scope.callback_error(event.message);
+	            }
+	        },{escape:true}
+	    );  
+	};
+	
+	$scope.rtk = {};
+	$scope.rtk.submitting = false;
+}
+
+</script>
+
+<div class="container" style="padding-top: 40px; text-align: center; width: 35%;" ng-controller="init">
+    <h2>
+        <apex:outputText value="{! IF(config.need_re_initialization__c,$label.app_updated,$label.sugoisurvey)}" />
+    </h2>
+	<div style="padding: 60px 0;">
+	    <div style="margin-bottom: 10px;">
+	    	<div ng-show="rtk.submitting == true" class="progress progress-striped active" style="height: 50px; margin-bottom:10px;">
+				<div class="progress-bar progress-bar-success"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%;"></div>
+			</div>
+	    	<input ng-show="rtk.submitting == false" type="button" ng-click="start_init()" class="btn btn-success btn-lg btn-block" value="{!IF(config.need_re_initialization__c,$label.re_initialize,$label.start)}" />
+	    </div>	
+	    <div style="margin-bottom: 10px;">
+			<div ng-show="rtk.submitting == true && rtk.result != 'error' && rtk.message != null" class="alert alert-success">
+				{{rtk.message}}
+			</div>
+			<div ng-show="rtk.submitting == false && rtk.result == 'error' && rtk.message != null" class="alert alert-danger">
+				{{rtk.message}}
+			</div>
+	    </div>	
+    </div>
+	<div>
+	    <span style="font-style:italic; font-size: 10pt;">All Rights Reserved. Copy Right Kazuki Nakajima, 2013</span>
+	</div>
+</div>
+
+</body>
+</html>
+</apex:page>

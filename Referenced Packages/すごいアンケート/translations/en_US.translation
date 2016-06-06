@@ -1,0 +1,799 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Translations xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customApplications>
+        <label>Sugoi Survey</label>
+        <name>sugoisurvey</name>
+    </customApplications>
+    <customLabels>
+        <label>add option</label>
+        <name>add_option</name>
+    </customLabels>
+    <customLabels>
+        <label>Application has already been initialized.</label>
+        <name>already_initialized</name>
+    </customLabels>
+    <customLabels>
+        <label>You&apos;ve already submitted the survey.</label>
+        <name>already_submitted</name>
+    </customLabels>
+    <customLabels>
+        <label>Required</label>
+        <name>answer_required</name>
+    </customLabels>
+    <customLabels>
+        <label>Anyone</label>
+        <name>anyone</name>
+    </customLabels>
+    <customLabels>
+        <label>Application has been updated</label>
+        <name>app_updated</name>
+    </customLabels>
+    <customLabels>
+        <label>Are you sure?</label>
+        <name>are_you_sure</name>
+    </customLabels>
+    <customLabels>
+        <label>Assigning permission set to sites user...</label>
+        <name>assign_perm_set_inprogress</name>
+    </customLabels>
+    <customLabels>
+        <label>Attachment</label>
+        <name>attached_handout</name>
+    </customLabels>
+    <customLabels>
+        <label>Attachment</label>
+        <name>attachment</name>
+    </customLabels>
+    <customLabels>
+        <label>attended</label>
+        <name>attended_the_event_and_submitted_survey1</name>
+    </customLabels>
+    <customLabels>
+        <label>and submitted a survey.</label>
+        <name>attended_the_event_and_submitted_survey2</name>
+    </customLabels>
+    <customLabels>
+        <label>Attendees</label>
+        <name>attendees</name>
+    </customLabels>
+    <customLabels>
+        <label>is attending</label>
+        <name>attending_the_event1</name>
+    </customLabels>
+    <customLabels>
+        <label>.</label>
+        <name>attending_the_event2</name>
+    </customLabels>
+    <customLabels>
+        <label>Wiill be automatically generated (not editable)</label>
+        <name>auto_generated</name>
+    </customLabels>
+    <customLabels>
+        <label>Send on survey submission</label>
+        <name>autosend_on_survey_submission</name>
+    </customLabels>
+    <customLabels>
+        <label>Back</label>
+        <name>back</name>
+    </customLabels>
+    <customLabels>
+        <label>Base Info</label>
+        <name>basic_config</name>
+    </customLabels>
+    <customLabels>
+        <label>Best Event</label>
+        <name>best_event</name>
+    </customLabels>
+    <customLabels>
+        <label>Best Performance</label>
+        <name>best_survey</name>
+    </customLabels>
+    <customLabels>
+        <label>Message Body</label>
+        <name>body</name>
+    </customLabels>
+    <customLabels>
+        <label>A Handout of the seminar you attended is now available. Please find attached.</label>
+        <name>body_of_deck_delivery_mail</name>
+    </customLabels>
+    <customLabels>
+        <label>Cancel</label>
+        <name>cancel</name>
+    </customLabels>
+    <customLabels>
+        <label>Chatter Setting</label>
+        <name>chatter_config</name>
+    </customLabels>
+    <customLabels>
+        <label>Reset Delivery Status</label>
+        <name>clear_delivered_flag</name>
+    </customLabels>
+    <customLabels>
+        <label>Going to reset delivery history for this template.</label>
+        <name>clearing_delivered_flag</name>
+    </customLabels>
+    <customLabels>
+        <label>Clone</label>
+        <name>clone</name>
+    </customLabels>
+    <customLabels>
+        <label>Going to clone this event.</label>
+        <name>cloning_event</name>
+    </customLabels>
+    <customLabels>
+        <label>Going to clone Survey.</label>
+        <name>cloning_survey</name>
+    </customLabels>
+    <customLabels>
+        <label>close</label>
+        <name>close</name>
+    </customLabels>
+    <customLabels>
+        <label>Going to close this survey.</label>
+        <name>closing_survey</name>
+    </customLabels>
+    <customLabels>
+        <label>Comment</label>
+        <name>comment</name>
+    </customLabels>
+    <customLabels>
+        <label>Complete</label>
+        <name>complete</name>
+    </customLabels>
+    <customLabels>
+        <label>Configuration has been updated.</label>
+        <name>config_has_been_updated</name>
+    </customLabels>
+    <customLabels>
+        <label>Create</label>
+        <name>create</name>
+    </customLabels>
+    <customLabels>
+        <label>Create Guest</label>
+        <name>create_guest</name>
+    </customLabels>
+    <customLabels>
+        <label>Create Lead</label>
+        <name>create_lead</name>
+    </customLabels>
+    <customLabels>
+        <label>Options</label>
+        <name>customSurveyOption</name>
+    </customLabels>
+    <customLabels>
+        <label>Question</label>
+        <name>customSurveyQuestion</name>
+    </customLabels>
+    <customLabels>
+        <label>delete</label>
+        <name>delete</name>
+    </customLabels>
+    <customLabels>
+        <label>Going to delete this event.</label>
+        <name>deleting_event</name>
+    </customLabels>
+    <customLabels>
+        <label>Going to delete guest.</label>
+        <name>deleting_guest</name>
+    </customLabels>
+    <customLabels>
+        <label>Going to delete presenter.</label>
+        <name>deleting_presenter</name>
+    </customLabels>
+    <customLabels>
+        <label>Going to delete Question.</label>
+        <name>deleting_question</name>
+    </customLabels>
+    <customLabels>
+        <label>Deleting Survey</label>
+        <name>deleting_survey</name>
+    </customLabels>
+    <customLabels>
+        <label>Destinations</label>
+        <name>deliver_destinations</name>
+    </customLabels>
+    <customLabels>
+        <label>Delivery History has been cleared.</label>
+        <name>delivered_flag_has_been_cleared</name>
+    </customLabels>
+    <customLabels>
+        <label>Mail will not be delivered to guests who have already been sent handout</label>
+        <name>delivered_guest_will_not_be_delivered_again</name>
+    </customLabels>
+    <customLabels>
+        <label>Going to send Guest Pass.</label>
+        <name>delivering_guest_pass</name>
+    </customLabels>
+    <customLabels>
+        <label>Going to send mail.</label>
+        <name>delivering_mail</name>
+    </customLabels>
+    <customLabels>
+        <label>Delivery has been completed.</label>
+        <name>delivery_complete</name>
+    </customLabels>
+    <customLabels>
+        <label>Dummy</label>
+        <name>dummy</name>
+    </customLabels>
+    <customLabels>
+        <label>Edit</label>
+        <name>edit</name>
+    </customLabels>
+    <customLabels>
+        <label>Edit Survey</label>
+        <name>edit_survey</name>
+    </customLabels>
+    <customLabels>
+        <label>Email</label>
+        <name>email</name>
+    </customLabels>
+    <customLabels>
+        <label>Your Email is not registered to this session.</label>
+        <name>email_not_registered</name>
+    </customLabels>
+    <customLabels>
+        <label>Enable free answer</label>
+        <name>enable_free_form</name>
+    </customLabels>
+    <customLabels>
+        <label>Error</label>
+        <name>error</name>
+    </customLabels>
+    <customLabels>
+        <label>Event</label>
+        <name>event</name>
+    </customLabels>
+    <customLabels>
+        <label>Date</label>
+        <name>event_date</name>
+    </customLabels>
+    <customLabels>
+        <label>Event History</label>
+        <name>event_history</name>
+    </customLabels>
+    <customLabels>
+        <label>Failed to create Chatter Feed.</label>
+        <name>failed_to_create_feedItem</name>
+    </customLabels>
+    <customLabels>
+        <label>Registering schedule job...</label>
+        <name>finish_init_inprogress</name>
+    </customLabels>
+    <customLabels>
+        <label>Free</label>
+        <name>free</name>
+    </customLabels>
+    <customLabels>
+        <label>Free Answers</label>
+        <name>free_answers</name>
+    </customLabels>
+    <customLabels>
+        <label>Go to Contact</label>
+        <name>go_to_contact</name>
+    </customLabels>
+    <customLabels>
+        <label>Guests</label>
+        <name>guest</name>
+    </customLabels>
+    <customLabels>
+        <label>Guest has been deleted.</label>
+        <name>guest_has_been_deleted</name>
+    </customLabels>
+    <customLabels>
+        <label>Guest Id is not set.</label>
+        <name>guest_id_is_not_set</name>
+    </customLabels>
+    <customLabels>
+        <label>Guest List</label>
+        <name>guest_list</name>
+    </customLabels>
+    <customLabels>
+        <label>Guest Pass</label>
+        <name>guest_pass_mail_subject</name>
+    </customLabels>
+    <customLabels>
+        <label>Handout</label>
+        <name>handout</name>
+    </customLabels>
+    <customLabels>
+        <label>Handout Download URL</label>
+        <name>handout_download_url</name>
+    </customLabels>
+    <customLabels>
+        <label>mail has been delivered.</label>
+        <name>has_been_delivered</name>
+    </customLabels>
+    <customLabels>
+        <label>has checked in for</label>
+        <name>has_checked_in_1</name>
+    </customLabels>
+    <customLabels>
+        <label>.</label>
+        <name>has_checked_in_2</name>
+    </customLabels>
+    <customLabels>
+        <label>High</label>
+        <name>high</name>
+    </customLabels>
+    <customLabels>
+        <label>Initialization completed.</label>
+        <name>init_completed</name>
+    </customLabels>
+    <customLabels>
+        <label>Entered Email is not valid format.</label>
+        <name>invalid_email</name>
+    </customLabels>
+    <customLabels>
+        <label>Invalid value</label>
+        <name>invalid_value</name>
+    </customLabels>
+    <customLabels>
+        <label>Low</label>
+        <name>low</name>
+    </customLabels>
+    <customLabels>
+        <label>Mail Setting</label>
+        <name>mail_config</name>
+    </customLabels>
+    <customLabels>
+        <label>Exceeds threshold for daily mail distribution.</label>
+        <name>mail_limit_exceeds</name>
+    </customLabels>
+    <customLabels>
+        <label>Preview</label>
+        <name>mail_preview</name>
+    </customLabels>
+    <customLabels>
+        <label>New Presenter</label>
+        <name>new_presenter</name>
+    </customLabels>
+    <customLabels>
+        <label>New Survey</label>
+        <name>new_survey</name>
+    </customLabels>
+    <customLabels>
+        <label>New Survey Title</label>
+        <name>new_survey_name</name>
+    </customLabels>
+    <customLabels>
+        <label>No</label>
+        <name>no</name>
+    </customLabels>
+    <customLabels>
+        <label>NO DATA</label>
+        <name>no_data</name>
+    </customLabels>
+    <customLabels>
+        <label>Option</label>
+        <name>option</name>
+    </customLabels>
+    <customLabels>
+        <label>Other</label>
+        <name>other</name>
+    </customLabels>
+    <customLabels>
+        <label>Other Survey</label>
+        <name>other_survey</name>
+    </customLabels>
+    <customLabels>
+        <label>Password</label>
+        <name>password</name>
+    </customLabels>
+    <customLabels>
+        <label>people</label>
+        <name>people</name>
+    </customLabels>
+    <customLabels>
+        <label>Performance</label>
+        <name>performance</name>
+    </customLabels>
+    <customLabels>
+        <label>Performance Summary</label>
+        <name>performance_summary</name>
+    </customLabels>
+    <customLabels>
+        <label>Phone</label>
+        <name>phone</name>
+    </customLabels>
+    <customLabels>
+        <label>Anyone</label>
+        <name>picklist_anyone</name>
+    </customLabels>
+    <customLabels>
+        <label>Anyone</label>
+        <name>picklist_no_condition</name>
+    </customLabels>
+    <customLabels>
+        <label>Registered Guests Only</label>
+        <name>picklist_registered_guests_only</name>
+    </customLabels>
+    <customLabels>
+        <label>Require Email</label>
+        <name>picklist_require_email</name>
+    </customLabels>
+    <customLabels>
+        <label>Require Survey Submission</label>
+        <name>picklist_require_survey_submission</name>
+    </customLabels>
+    <customLabels>
+        <label>Please enter your answer by 255 letters.</label>
+        <name>pls_enter_by_255_letters</name>
+    </customLabels>
+    <customLabels>
+        <label>Please enter question.</label>
+        <name>pls_enter_question</name>
+    </customLabels>
+    <customLabels>
+        <label>Please enter required field -</label>
+        <name>pls_enter_required_field</name>
+    </customLabels>
+    <customLabels>
+        <label>Please enter Session Title.</label>
+        <name>pls_enter_session_name</name>
+    </customLabels>
+    <customLabels>
+        <label>Please enter your Email.</label>
+        <name>pls_input_email</name>
+    </customLabels>
+    <customLabels>
+        <label>Please tell me detail (up to 255 letters).</label>
+        <name>pls_tell_me_detail</name>
+    </customLabels>
+    <customLabels>
+        <label>Please wait for a while</label>
+        <name>pls_wait_for_a_while</name>
+    </customLabels>
+    <customLabels>
+        <label>Presenter</label>
+        <name>presenter</name>
+    </customLabels>
+    <customLabels>
+        <label>Presenter has been deleted.</label>
+        <name>presenter_has_been_deleted</name>
+    </customLabels>
+    <customLabels>
+        <label>Presenter List</label>
+        <name>presenter_list</name>
+    </customLabels>
+    <customLabels>
+        <label>Processing</label>
+        <name>processing</name>
+    </customLabels>
+    <customLabels>
+        <label>Property</label>
+        <name>property</name>
+    </customLabels>
+    <customLabels>
+        <label>Questions and Answers</label>
+        <name>q_a</name>
+    </customLabels>
+    <customLabels>
+        <label>Question has been deleted.</label>
+        <name>question_has_been_deleted</name>
+    </customLabels>
+    <customLabels>
+        <label>Please enter Question.</label>
+        <name>question_is_missing</name>
+    </customLabels>
+    <customLabels>
+        <label>Rate</label>
+        <name>rate</name>
+    </customLabels>
+    <customLabels>
+        <label>Rate Avg.</label>
+        <name>rate_avg</name>
+    </customLabels>
+    <customLabels>
+        <label>Transition of Rate Avg.</label>
+        <name>rate_avg_transition</name>
+    </customLabels>
+    <customLabels>
+        <label>Rating</label>
+        <name>rating</name>
+    </customLabels>
+    <customLabels>
+        <label>Update Configuration</label>
+        <name>re_initialize</name>
+    </customLabels>
+    <customLabels>
+        <label>Redirecting to top page...</label>
+        <name>redirecting_to_top_page</name>
+    </customLabels>
+    <customLabels>
+        <label>Reload</label>
+        <name>reload</name>
+    </customLabels>
+    <customLabels>
+        <label>Report</label>
+        <name>report</name>
+    </customLabels>
+    <customLabels>
+        <label>Requested_number_of_questions_does_not_match_to_database.</label>
+        <name>requested_number_of_question_is_not_valid</name>
+    </customLabels>
+    <customLabels>
+        <label>Required parameter is missing.</label>
+        <name>required_parameter_is_missing</name>
+    </customLabels>
+    <customLabels>
+        <label>Reset</label>
+        <name>reset</name>
+    </customLabels>
+    <customLabels>
+        <label>Save</label>
+        <name>save</name>
+    </customLabels>
+    <customLabels>
+        <label>Saved.</label>
+        <name>saved</name>
+    </customLabels>
+    <customLabels>
+        <label>Please select record.</label>
+        <name>select_record</name>
+    </customLabels>
+    <customLabels>
+        <label>Send</label>
+        <name>send</name>
+    </customLabels>
+    <customLabels>
+        <label>Send Mail</label>
+        <name>send_mail</name>
+    </customLabels>
+    <customLabels>
+        <label>Sender Email</label>
+        <name>sender</name>
+    </customLabels>
+    <customLabels>
+        <label>Survey has been copied.</label>
+        <name>session_has_been_copied</name>
+    </customLabels>
+    <customLabels>
+        <label>Session has been saved.</label>
+        <name>session_has_been_saved</name>
+    </customLabels>
+    <customLabels>
+        <label>Session Id has not been set.</label>
+        <name>session_id_is_not_set</name>
+    </customLabels>
+    <customLabels>
+        <label>Session is not configured properly. Please contact system administrator.</label>
+        <name>session_is_not_configured_correctly</name>
+    </customLabels>
+    <customLabels>
+        <label>Sites has not been activated.</label>
+        <name>sites_not_activated</name>
+    </customLabels>
+    <customLabels>
+        <label>Permission Sets for Sites is not found.</label>
+        <name>sites_permission_set_not_found</name>
+    </customLabels>
+    <customLabels>
+        <label>User for Sites is not found.</label>
+        <name>sites_user_not_found</name>
+    </customLabels>
+    <customLabels>
+        <label>Sort</label>
+        <name>sort</name>
+    </customLabels>
+    <customLabels>
+        <label>Sort order has been saved.</label>
+        <name>sort_has_been_completed</name>
+    </customLabels>
+    <customLabels>
+        <label>Specified question was not found.</label>
+        <name>specified_question_not_found</name>
+    </customLabels>
+    <customLabels>
+        <label>Specified session does not exist.</label>
+        <name>specified_session_does_not_exist</name>
+    </customLabels>
+    <customLabels>
+        <label>Specified Survey does not exist.</label>
+        <name>specified_survey_does_not_exist</name>
+    </customLabels>
+    <customLabels>
+        <label>Start</label>
+        <name>start</name>
+    </customLabels>
+    <customLabels>
+        <label>Initializing custom setting...</label>
+        <name>start_init_inprogress</name>
+    </customLabels>
+    <customLabels>
+        <label>Subject</label>
+        <name>subject</name>
+    </customLabels>
+    <customLabels>
+        <label>Guest Pass</label>
+        <name>subject_for_mail_guest_pass</name>
+    </customLabels>
+    <customLabels>
+        <label>Handout Attached</label>
+        <name>subject_for_mail_handout</name>
+    </customLabels>
+    <customLabels>
+        <label>Survey URL</label>
+        <name>subject_for_mail_survey_link</name>
+    </customLabels>
+    <customLabels>
+        <label>Handout Attached</label>
+        <name>subject_of_deck_delivery_mail</name>
+    </customLabels>
+    <customLabels>
+        <label>Submit</label>
+        <name>submit</name>
+    </customLabels>
+    <customLabels>
+        <label>Sugoi Survey</label>
+        <name>sugoiSurvey</name>
+    </customLabels>
+    <customLabels>
+        <label>Sum</label>
+        <name>sum</name>
+    </customLabels>
+    <customLabels>
+        <label>Survey</label>
+        <name>survey</name>
+    </customLabels>
+    <customLabels>
+        <label>Submitted Survey</label>
+        <name>survey_answer</name>
+    </customLabels>
+    <customLabels>
+        <label>Collection Rate</label>
+        <name>survey_collection_rate</name>
+    </customLabels>
+    <customLabels>
+        <label>Survey has been cloned.</label>
+        <name>survey_has_been_cloned</name>
+    </customLabels>
+    <customLabels>
+        <label>Your survey has been created.</label>
+        <name>survey_has_been_created</name>
+    </customLabels>
+    <customLabels>
+        <label>Survey has been deleted.</label>
+        <name>survey_has_been_deleted</name>
+    </customLabels>
+    <customLabels>
+        <label>Survey has been saved.</label>
+        <name>survey_has_been_saved</name>
+    </customLabels>
+    <customLabels>
+        <label>Survey has been submitted.</label>
+        <name>survey_has_been_submitted</name>
+    </customLabels>
+    <customLabels>
+        <label>Survey History</label>
+        <name>survey_history</name>
+    </customLabels>
+    <customLabels>
+        <label>Survey Id has not been set.</label>
+        <name>survey_id_is_not_set</name>
+    </customLabels>
+    <customLabels>
+        <label>This survey is over.</label>
+        <name>survey_is_over</name>
+    </customLabels>
+    <customLabels>
+        <label>Survey Link</label>
+        <name>survey_link</name>
+    </customLabels>
+    <customLabels>
+        <label>Survey List</label>
+        <name>survey_list</name>
+    </customLabels>
+    <customLabels>
+        <label>Please enter Survey Title.</label>
+        <name>survey_name_is_missing</name>
+    </customLabels>
+    <customLabels>
+        <label>Selectable (Multi)</label>
+        <name>survey_type_checkbox</name>
+    </customLabels>
+    <customLabels>
+        <label>Free Form</label>
+        <name>survey_type_free</name>
+    </customLabels>
+    <customLabels>
+        <label>Selectable (Single)</label>
+        <name>survey_type_radio</name>
+    </customLabels>
+    <customLabels>
+        <label>Survey URL</label>
+        <name>survey_url</name>
+    </customLabels>
+    <customLabels>
+        <label>Template</label>
+        <name>template</name>
+    </customLabels>
+    <customLabels>
+        <label>There are not enough number of question to sort.</label>
+        <name>there_are_not_enough_number_of_question_to_sort</name>
+    </customLabels>
+    <customLabels>
+        <label>Mail Distribution</label>
+        <name>title_of_deliverDeck</name>
+    </customLabels>
+    <customLabels>
+        <label>Total Events</label>
+        <name>total_events</name>
+    </customLabels>
+    <customLabels>
+        <label>Total Guests</label>
+        <name>total_guests</name>
+    </customLabels>
+    <customLabels>
+        <label>Surveys</label>
+        <name>total_surveys</name>
+    </customLabels>
+    <customLabels>
+        <label>Unknown Company</label>
+        <name>unknown_company</name>
+    </customLabels>
+    <customLabels>
+        <label>Unregistered Guest</label>
+        <name>unregistered_guest</name>
+    </customLabels>
+    <customLabels>
+        <label>Up to 255 letters</label>
+        <name>up_to_255_letter</name>
+    </customLabels>
+    <customLabels>
+        <label>Update</label>
+        <name>update</name>
+    </customLabels>
+    <customLabels>
+        <label>Updates has been saved.</label>
+        <name>update_has_been_saved</name>
+    </customLabels>
+    <customLabels>
+        <label>People who have submitted survey</label>
+        <name>who_have_submitted_survey</name>
+    </customLabels>
+    <customLabels>
+        <label>Rating (5 Point)</label>
+        <name>xPointScale</name>
+    </customLabels>
+    <customLabels>
+        <label>Yes</label>
+        <name>yes</name>
+    </customLabels>
+    <customLabels>
+        <label>You can sort surveys by drag &amp; drop.</label>
+        <name>you_can_sort_by_drag</name>
+    </customLabels>
+    <customLabels>
+        <label>Your Company</label>
+        <name>your_company</name>
+    </customLabels>
+    <customLabels>
+        <label>Your Name</label>
+        <name>your_name</name>
+    </customLabels>
+    <customTabs>
+        <label>deprecarted Sugoi Survey</label>
+        <name>S1_session_list</name>
+    </customTabs>
+    <customTabs>
+        <label>Sugoi Survey</label>
+        <name>S1_survey</name>
+    </customTabs>
+    <customTabs>
+        <label>deprecated Surveys</label>
+        <name>event_and_session</name>
+    </customTabs>
+    <customTabs>
+        <label>Surveys</label>
+        <name>session_list</name>
+    </customTabs>
+    <customTabs>
+        <label>Surveys</label>
+        <name>survey</name>
+    </customTabs>
+    <quickActions>
+        <label><!-- すごいアンケート --></label>
+        <name>NewSugoiSurvey</name>
+    </quickActions>
+</Translations>

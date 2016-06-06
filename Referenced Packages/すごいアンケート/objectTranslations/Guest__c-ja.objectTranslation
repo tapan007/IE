@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>ゲスト</value>
+    </caseValues>
+    <fields>
+        <label><!-- deprecated_出席 --></label>
+        <name>Attend__c</name>
+    </fields>
+    <fields>
+        <label><!-- 出席 --></label>
+        <name>Checkin__c</name>
+    </fields>
+    <fields>
+        <label><!-- 会社 --></label>
+        <name>Company__c</name>
+    </fields>
+    <fields>
+        <label><!-- 取引先責任者 --></label>
+        <name>Contact__c</name>
+        <relationshipLabel><!-- ゲスト --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Email --></label>
+        <name>Email__c</name>
+    </fields>
+    <fields>
+        <label><!-- 名 --></label>
+        <name>First_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- 受講票配信済み --></label>
+        <name>Guest_Pass_Delivered__c</name>
+    </fields>
+    <fields>
+        <label><!-- 資料配信済み --></label>
+        <name>Handout_Delivered__c</name>
+    </fields>
+    <fields>
+        <label><!-- 姓 --></label>
+        <name>Last_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- メール配信済み --></label>
+        <name>Mail_Delivered__c</name>
+    </fields>
+    <fields>
+        <label><!-- 複数の取引先責任者に該当 --></label>
+        <name>Multiple_Contacts__c</name>
+    </fields>
+    <fields>
+        <label><!-- 名前 --></label>
+        <name>Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- 電話番号 --></label>
+        <name>Phone__c</name>
+    </fields>
+    <fields>
+        <label><!-- プロフィール写真URL --></label>
+        <name>Profile_Photo__c</name>
+    </fields>
+    <fields>
+        <label><!-- イベント --></label>
+        <name>Session__c</name>
+        <relationshipLabel><!-- ゲスト --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- 状況 --></label>
+        <name>Status__c</name>
+        <picklistValues>
+            <masterLabel>attended</masterLabel>
+            <translation><!-- attended --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>registered</masterLabel>
+            <translation><!-- registered --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>submitted</masterLabel>
+            <translation><!-- submitted --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- アンケートリンク配信済み --></label>
+        <name>Survey_Link_Delivered__c</name>
+    </fields>
+    <fields>
+        <label><!-- 役職 --></label>
+        <name>Title__c</name>
+    </fields>
+    <fields>
+        <label><!-- Chatterに投稿する必要有り --></label>
+        <name>To_Be_Posted_To_Record_Feed__c</name>
+    </fields>
+    <layouts>
+        <layout>ゲストレイアウト</layout>
+        <sections>
+            <label><!-- カスタムリンク --></label>
+            <section>カスタムリンク</section>
+        </sections>
+        <sections>
+            <label><!-- メール配信状況 --></label>
+            <section>メール配信状況</section>
+        </sections>
+    </layouts>
+</CustomObjectTranslation>

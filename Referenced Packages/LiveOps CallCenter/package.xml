@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LiveOps CallCenter</fullName>
+    <apiAccessLevel>Unrestricted</apiAccessLevel>
+    <namespacePrefix>LOCC_App</namespacePrefix>
+    <setupWeblink>Call_Center_Settings</setupWeblink>
+    <types>
+        <members>CTestCallCenterSettings</members>
+        <members>CustomField</members>
+        <members>CustomFieldTest</members>
+        <members>callCenterSettings</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>getCC</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
+        <members>updateLOCCBaseURL</members>
+        <name>ApexTrigger</name>
+    </types>
+    <types>
+        <members>LOCCOpenCTI</members>
+        <name>CallCenter</name>
+    </types>
+    <types>
+        <members>Activity.Call_Recording__c</members>
+        <members>Activity.LO_CC_base_URL__c</members>
+        <members>Activity.calllength__c</members>
+        <members>Activity.callscore__c</members>
+        <members>Activity.campaignid__c</members>
+        <members>Activity.campaignname__c</members>
+        <members>Activity.dnis__c</members>
+        <members>Activity.interactionid__c</members>
+        <members>Activity.phonenumbercountry__c</members>
+        <members>Activity.wrapuplength__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>Call_Center_Settings</members>
+        <name>CustomPageWebLink</name>
+    </types>
+    <version>29.0</version>
+</Package>

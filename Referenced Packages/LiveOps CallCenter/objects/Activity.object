@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Call_Recording__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>HYPERLINK( LO_CC_base_URL__c  &amp; &quot;/html/play.cgi?session_id=&quot; &amp; CallObject, &quot;Play Recording&quot;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Call Recording</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>LO_CC_base_URL__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>LO CC base URL</label>
+        <required>false</required>
+        <type>Url</type>
+    </fields>
+    <fields>
+        <fullName>calllength__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Call Length</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>callscore__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Call Score</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>campaignid__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Campaign ID</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>campaignname__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Campaign Name</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>dnis__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>DNIS</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>interactionid__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Interaction ID</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>phonenumbercountry__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Phone Number Country</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>wrapuplength__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Wrap Up Length</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+</CustomObject>

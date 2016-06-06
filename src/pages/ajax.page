@@ -9,7 +9,11 @@
 		array = result.getArray("records");
 		for (var i=0; i< array.length; i++) {
 			var record = array[i];
+<<<<<<< HEAD
+			console.log(record.Name + " -- " + record.Id);
+=======
 			console.log(record.Name + " -- hello --- " + record.Id);
+>>>>>>> branch 'master' of https://github.com/tapan007/IE.git
 		}
 	</script>
 	<div id="output"> </div>
