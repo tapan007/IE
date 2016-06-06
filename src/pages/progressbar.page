@@ -1,0 +1,327 @@
+<apex:page docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="true" controller="progressbar">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-throttle-debounce/1.1/jquery.ba-throttle-debounce.min.js" type="text/javascript"></script>
+    
+    <apex:stylesheet value="{!URLFOR($Resource.datatable,'datatable/JQuery_datatable/css/dataTables.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.datatable,'datatable/bootstrap/css/DT_bootstrap.css')}"/>
+    
+    <apex:stylesheet value="{!URLFOR($Resource.datatable,'datatable/bootstrap/css/bootstrap.min.css')}"/>
+<!--     <apex:includeScript value="{!URLFOR($Resource.jQueryPlugin,  'js/jquery-1.7.1-jquery.min.js')}"/> -->
+<!--     <apex:includeScript value="{!URLFOR($Resource.datatable,'datatable/JQuery_datatable/js/jquery.dataTables.min.js')}"/> -->
+<!--     <apex:includeScript value="{!URLFOR($Resource.datatable,'datatable/bootstrap/js/DT_bootstrap.js')}"/> -->
+<!--     <apex:includeScript value="{!URLFOR($Resource.bootstrap, '/dist/js/bootstrap.min.js')}"/> -->
+<!--     <apex:includeScript value="{!URLFOR($Resource.bootstrap, '/dist/js/bootstrap.js')}"/> -->
+<!--      <apex:stylesheet value="{!URLFOR($Resource.EARNResources, 'css/style.css')}"/> -->
+    <style> 
+    article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block;}
+    audio,canvas,video{display:inline-block;}audio:not([controls]){display:none;height:0;}
+    [hidden]{display:none;}
+    html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;}body{margin:0;}a:focus{outline:thin dotted;}a:active,a:hover{outline:0;}h1{font-size:2em;margin:0.67em 0;}abbr[title]{border-bottom:1px dotted;}b,strong{font-weight:bold;}dfn{font-style:italic;}hr{-moz-box-sizing:content-box;box-sizing:content-box;height:0;}mark{background:#ff0;color:#000;}code,kbd,pre,samp{font-family:monospace,serif;font-size:1em;}pre{white-space:pre-wrap;}q{quotes:"\201C" "\201D" "\2018" "\2019";}small{font-size:80%;}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline;}sup{top:-0.5em;}sub{bottom:-0.25em;}img{border:0;}svg:not(:root){overflow:hidden;}figure{margin:0;}fieldset{border:1px solid #c0c0c0;margin:0 2px;padding:0.35em 0.625em 0.75em;}legend{border:0;padding:0;}button,input,select,textarea{font-family:inherit;font-size:100%;margin:0;}button,input{line-height:normal;}button,select{text-transform:none;}button,html input[type="button"],input[type="reset"],input[type="submit"]{-webkit-appearance:button;cursor:pointer;}button[disabled],html input[disabled]{cursor:default;}input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0;}input[type="search"]{-webkit-appearance:textfield;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box;}input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration{-webkit-appearance:none;}button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0;}textarea{overflow:auto;vertical-align:top;}table{border-collapse:collapse;border-spacing:0;}       
+   .table-bordered {
+border-collapse: collapse !important;}    
+/* Component styles */
+@font-face {
+    font-family: 'Blokk';
+    src: url('../fonts/blokk/BLOKKRegular.eot');
+    src: url('../fonts/blokk/BLOKKRegular.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/blokk/BLOKKRegular.woff') format('woff'),
+         url('../fonts/blokk/BLOKKRegular.svg#BLOKKRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+.component {
+    line-height: 1.5em;
+    margin: 0 auto;
+    padding: 2em 0 3em;
+    width: 90%;
+    max-width: 1000px;
+    overflow: hidden;
+}
+.component .filler {
+    font-family: "Blokk", Arial, sans-serif;
+    color: #d3d3d3;
+}
+table {
+    border-collapse: collapse !important;
+    margin-bottom: 3em;
+    width: 100%;
+    background: #fff;
+}
+td, th {
+    padding: 0.75em 1.5em;
+    text-align: left;
+}
+    td.err {
+        background-color: #e992b9;
+        color: #fff;
+        font-size: 0.75em;
+        text-align: center;
+        line-height: 1;
+    }
+th {
+    background-color: #31bc86;
+    font-weight: bold;
+    color: #fff;
+    white-space: nowrap;
+}
+tbody th {
+    background-color: #2ea879;
+}
+tbody tr:nth-child(2n-1) {
+    background-color: #f5f5f5;
+    transition: all .125s ease-in-out;
+}
+tbody tr:hover {
+    background-color: rgba(129,208,177,.3);
+}
+
+/* For appearance */
+.sticky-wrap {
+    overflow-x: auto;
+    overflow-y: hidden;
+    position: relative;
+    margin: 3em 0;
+    width: 100%;
+}
+.sticky-wrap .sticky-thead,
+.sticky-wrap .sticky-col,
+.sticky-wrap .sticky-intersect {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: all .125s ease-in-out;
+    z-index: 50;
+    width: auto; /* Prevent table from stretching to full size */
+}
+    .sticky-wrap .sticky-thead {
+        box-shadow: 0 0.25em 0.1em -0.1em rgba(0,0,0,.125);
+        z-index: 100;
+        width: 100%; /* Force stretch */
+    }
+    .sticky-wrap .sticky-intersect {
+        opacity: 1;
+        z-index: 150;
+
+    }
+        .sticky-wrap .sticky-intersect th {
+            background-color: #666;
+            color: #eee;
+        }
+.sticky-wrap td,
+.sticky-wrap th {
+    box-sizing: border-box;
+}
+
+/* Not needed for sticky header/column functionality */
+td.user-name {
+    text-transform: capitalize;
+}
+.sticky-wrap.overflow-y {
+    overflow-y: auto;
+    max-height: 50vh;
+}
+
+
+
+
+                    
+    </style>
+   
+
+    
+        <apex:form style="margin:3%; padding:10px;">
+             <div class="select">
+                <apex:dataTable value="{!tableWrapperlist}" var="t" styleClass="table table-bordered">
+                    <apex:column value="{!t.str1}" headerValue="header1"/>
+                    <apex:column value="{!t.str2}" headerValue="header2"/>
+                    <apex:column value="{!t.str3}" headerValue="header3"/>
+                    <apex:column value="{!t.str4}" headerValue="header4"/>
+                    <apex:column value="{!t.str5}" headerValue="header5"/>
+                    <apex:column value="{!t.str6}" headerValue="header6"/>
+                    <apex:column value="{!t.str7}" headerValue="header7"/>
+                    <apex:column value="{!t.str8}" headerValue="header8"/>
+                    <apex:column value="{!t.str9}" headerValue="header9"/>
+                    <apex:column value="{!t.str10}" headerValue="header10"/>
+                    <apex:column value="{!t.str11}" headerValue="header11"/>
+                    <apex:column value="{!t.str12}" headerValue="header12"/> 
+                    <apex:column value="{!t.str13}" headerValue="header13"/>
+                    <apex:column value="{!t.str14}" headerValue="header14"/>
+                    <apex:column value="{!t.str15}" headerValue="header15"/>
+                    <apex:column value="{!t.str16}" headerValue="header16"/>
+                    <apex:column value="{!t.str17}" headerValue="header17"/>
+                    <apex:column value="{!t.str18}" headerValue="header18"/>
+                </apex:dataTable>
+             
+             </div>
+             
+             
+             
+             
+             
+               <script>
+               
+               $("tbody tr td:first-child").each(function() {
+  $(this).replaceWith('<th>' + $(this).text() + '</th>'); 
+ });
+ 
+                            $(function(){
+    $('table').each(function() {
+        if($(this).find('thead').length > 0 && $(this).find('th').length > 0) {
+            // Clone <thead>
+            
+            var $w     = $(window),
+                $t     = $(this),
+                $thead = $t.find('thead').clone(),
+                $col   = $t.find('thead, tbody').clone();
+
+            // Add class, remove margins, reset width and wrap table
+            $t
+            .addClass('sticky-enabled')
+            .css({
+                margin: 0,
+                width: '100%'
+            }).wrap('<div class="sticky-wrap" />');
+
+            if($t.hasClass('overflow-y')) $t.removeClass('overflow-y').parent().addClass('overflow-y');
+
+            // Create new sticky table head (basic)
+            $t.after('<table class="table table-bordered sticky-thead " />');
+
+            // If <tbody> contains <th>, then we create sticky column and intersect (advanced)
+            if($t.find('tbody th').length > 0) {
+                $t.after('<table class="table table-bordered sticky-col" /><table class="sticky-intersect" />');
+            }
+
+            // Create shorthand for things
+            var $stickyHead  = $(this).siblings('.sticky-thead'),
+                $stickyCol   = $(this).siblings('.sticky-col'),
+                $stickyInsct = $(this).siblings('.sticky-intersect'),
+                $stickyWrap  = $(this).parent('.sticky-wrap');
+
+            $stickyHead.append($thead);
+
+            $stickyCol
+            .append($col)
+                .find('thead th:gt(0)').remove()
+                .end()
+                .find('tbody td').remove();
+
+            $stickyInsct.html('<thead><tr><th>'+$t.find('thead th:first-child').html()+'</th></tr></thead>');
+            
+            // Set widths
+            var setWidths = function () {
+                    $t
+                    .find('thead th').each(function (i) {
+                        $stickyHead.find('th').eq(i).width($(this).width());
+                    })
+                    .end()
+                    .find('tr').each(function (i) {
+                        $stickyCol.find('tr').eq(i).height($(this).height());
+                    });
+
+                    // Set width of sticky table head
+                    $stickyHead.width($t.width());
+
+                    // Set width of sticky table col
+                    $stickyCol.find('th').add($stickyInsct.find('th')).width($t.find('thead th').width())
+                },
+                repositionStickyHead = function () {
+                    // Return value of calculated allowance
+                    var allowance = calcAllowance();
+                
+                    // Check if wrapper parent is overflowing along the y-axis
+                    if($t.height() > $stickyWrap.height()) {
+                        // If it is overflowing (advanced layout)
+                        // Position sticky header based on wrapper scrollTop()
+                        if($stickyWrap.scrollTop() > 0) {
+                            // When top of wrapping parent is out of view
+                            $stickyHead.add($stickyInsct).css({
+                                opacity: 1,
+                                top: $stickyWrap.scrollTop()
+                            });
+                        } else {
+                            // When top of wrapping parent is in view
+                            $stickyHead.add($stickyInsct).css({
+                                opacity: 0,
+                                top: 0
+                            });
+                        }
+                    } else {
+                        // If it is not overflowing (basic layout)
+                        // Position sticky header based on viewport scrollTop
+                        if($w.scrollTop() > $t.offset().top && $w.scrollTop() < $t.offset().top + $t.outerHeight() - allowance) {
+                            // When top of viewport is in the table itself
+                            $stickyHead.add($stickyInsct).css({
+                                opacity: 1,
+                                top: $w.scrollTop() - $t.offset().top
+                            });
+                        } else {
+                            // When top of viewport is above or below table
+                            $stickyHead.add($stickyInsct).css({
+                                opacity: 0,
+                                top: 0
+                            });
+                        }
+                    }
+                },
+                repositionStickyCol = function () {
+                    if($stickyWrap.scrollLeft() > 0) {
+                        // When left of wrapping parent is out of view
+                        $stickyCol.add($stickyInsct).css({
+                            opacity: 1,
+                            left: $stickyWrap.scrollLeft()
+                        });
+                    } else {
+                        // When left of wrapping parent is in view
+                        $stickyCol
+                        .css({ opacity: 0 })
+                        .add($stickyInsct).css({ left: 0 });
+                    }
+                },
+                calcAllowance = function () {
+                    var a = 0;
+                    // Calculate allowance
+                    $t.find('tbody tr:lt(3)').each(function () {
+                        a += $(this).height();
+                    });
+                    
+                    // Set fail safe limit (last three row might be too tall)
+                    // Set arbitrary limit at 0.25 of viewport height, or you can use an arbitrary pixel value
+                    if(a > $w.height()*0.25) {
+                        a = $w.height()*0.25;
+                    }
+                    
+                    // Add the height of sticky header
+                    a += $stickyHead.height();
+                    return a;
+                };
+
+            setWidths();
+
+            $t.parent('.sticky-wrap').scroll($.throttle(250, function() {
+                repositionStickyHead();
+                repositionStickyCol();
+            }));
+
+            $w
+            .load(setWidths)
+            .resize($.debounce(250, function () {
+                setWidths();
+                repositionStickyHead();
+                repositionStickyCol();
+            }))
+            .scroll($.throttle(250, repositionStickyHead));
+        }
+    });
+});
+        </script>
+<script>
+    
+</script>
+        </apex:form>
+
+  
+  
+  
+</apex:page>

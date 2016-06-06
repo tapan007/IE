@@ -1,0 +1,28 @@
+<apex:page showHeader="false" sidebar="false" standardStylesheets="false" docType="html-5.0">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+
+<script>
+      angular.module('app', []);
+  </script>
+
+<html>
+
+<head>
+
+</head>
+
+<body  ng-app="app">
+
+<div>
+ 
+<p>Input something in the input box:</p>
+<p>Name: <input type="text" ng-model="name" value="John"></input></p>
+<p ng-bind="name"></p>
+{{name}}
+</div>
+
+</body>
+</html>
+
+</apex:page>

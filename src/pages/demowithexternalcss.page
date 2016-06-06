@@ -1,0 +1,8 @@
+<apex:page >
+  <!-- Begin Default Content REMOVE THIS -->
+  <link rel="stylesheet" type="text/css" href="//localhost:8080/mywebproject/custom.css"/>
+  <h1>Congratulations</h1>
+  <div class="red">hello</div>
+  This is your new Page
+  <!-- End Default Content REMOVE THIS -->
+</apex:page>

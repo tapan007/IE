@@ -1,0 +1,7 @@
+<apex:page controller="createZendeskTicket">
+<apex:form >
+<apex:commandButton action="{!ineligibleTicketRaise}" value="Raise Ticket from mail"/>
+
+<apex:commandButton action="{!apiTicketRaise}" value="Raise Ticket from api"/>
+</apex:form>
+ </apex:page>

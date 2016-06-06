@@ -1,0 +1,39 @@
+<apex:page >
+    
+<apex:includeScript value="/support/console/31.0/integration.js"/>
+
+   <script type='text/javascript' src='/canvas/sdk/js/publisher.js'/> 
+   <apex:form >
+    <script type="text/javascript">
+   
+    var checkWindowVisibility = function (result) {
+    if (result.hidden) {
+        sforce.console.setCustomConsoleComponentWindowVisible(true);                 
+    } else {
+        sforce.console.setCustomConsoleComponentWindowVisible(false);                 
+    }
+};
+                var toggleEventHandler = function (result) {
+                  //sforce.console.setCustomConsoleComponentWindowVisible(true);
+                   sforce.console.isCustomConsoleComponentWindowHidden(checkWindowVisibility );
+                   
+                  
+                  
+        }; 
+             //var title = 'TestTitle';
+          //sforce.console.addToBrowserTitleQueue(title);
+          sforce.console.addEventListener('ust',toggleEventHandler );
+          sforce.console.addEventListener('login',function(){
+              sforce.console.setCustomConsoleComponentWindowVisible(false); 
+          });
+
+
+    </script>
+    
+  <!-- Begin Default Content REMOVE THIS -->
+  <h1>Congratulations</h1>
+  This is your new Page
+  <!-- End Default Content REMOVE THIS -->
+  <input type="text"/>
+  </apex:form>
+</apex:page>

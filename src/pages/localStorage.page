@@ -1,0 +1,58 @@
+<apex:page docType="html-5.0" showHeader="false" sidebar="false">
+  <apex:form id="form1" >
+
+<apex:includeScript value="/support/console/31.0/integration.js"/>
+ <script type='text/javascript' src='/canvas/sdk/js/publisher.js'/>   
+    <script type="text/javascript">
+    var checkWindowVisibility = function (result) {
+    if (result.hidden) {
+        sforce.console.setCustomConsoleComponentWindowVisible(true);                 
+    } else {
+        sforce.console.setCustomConsoleComponentWindowVisible(false);                 
+    }
+};
+                var toggleEventHandler = function (result) {
+                   //sforce.console.setCustomConsoleComponentWindowVisible(true);
+                   //alert('hi');
+                   sforce.console.isCustomConsoleComponentWindowHidden(checkWindowVisibility );
+                   //Sfdc.canvas.publisher.publish({name:"publisher.selectAction",payload:{actionName:"Case.Email"}});
+                  
+        }; 
+             //var title = 'TestTitle';
+          //sforce.console.addToBrowserTitleQueue(title);
+          sforce.console.addEventListener('login',toggleEventHandler );
+sforce.console.addEventListener('ust',function(){
+              sforce.console.setCustomConsoleComponentWindowVisible(false); 
+          });
+
+    </script>
+    
+    <script type="text/javascript">
+    //alert(localStorage.getItem('ab'));
+    document.getElementById('hello1').value =  localStorage.getItem('ab');
+    window.addEventListener('storage', storage_handler, false);
+    function storage_handler(evt)
+{
+    alert('The modified key was '+evt.key);
+    alert('The original value was '+evt.oldValue);
+    alert('The new value is '+evt.newValue);
+    alert('The URL of the page that made the change was '+evt.url);
+    alert('The window where the change was made was '+evt.source);
+}
+    function RefreshParent() {
+        localStorage.setItem('ab', document.getElementById('hello').value);
+        setValue();
+    }
+   function setValue(){
+        document.getElementById('hello1').value =  localStorage.getItem('ab');
+   }
+</script>
+
+
+    
+    <input type="text" id="hello"/>
+    <input type="text" id="hello1"/>
+<input type="button" value="Refresh Parent" onclick="RefreshParent()" />
+
+</apex:form>
+</apex:page>

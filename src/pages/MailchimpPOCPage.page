@@ -1,0 +1,32 @@
+<apex:page controller="MailchimpPOC" >
+
+<apex:form >
+<h1> Select List
+</h1>
+	<apex:selectlist size="1" value="{!selectedValue}"  style="margin-left:45px;">
+
+<apex:selectoptions value="{!options}"> </apex:selectoptions>
+
+</apex:selectlist>
+<br/>
+<h1> Template Name
+</h1>
+<apex:inputText value="{!templateName}"/>
+<br/>
+<h1> Subject
+</h1>
+<apex:inputText value="{!subject}"/>
+<br/>
+<h1> Type Message:
+</h1>
+<br/>
+<apex:inputTextArea value="{!message}" rows="5" style="width:250px; margin-left:100px;">
+</apex:inputTextArea>
+<br/>
+<h1> Campaign Name
+</h1>
+<apex:inputText value="{!campaignName}"/>
+<apex:commandButton value="send" action="{!send}"/>
+
+</apex:form> 
+</apex:page>

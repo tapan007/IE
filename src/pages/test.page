@@ -1,0 +1,27 @@
+<apex:page controller="testctrl">
+Hello
+<apex:outputText value="{!statusmsg}"></apex:outputText>
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js" />
+<script type="text/javascript">
+alert('hi');
+
+window.onload = function(){
+var xmlhttp;
+if (window.XMLHttpRequest){
+    //xmlhttp=new XMLHttpRequest();
+    xmlhttp = new XDomainRequest();
+    alert('inside the loop'+xmlhttp);
+    xmlhttp.addEventListener("upload", function(){
+
+});
+ }
+ alert(xmlhttp);
+ alert(xmlhttp.upload);
+ }
+
+
+
+</script>
+ <apex:actionRegion ></apex:actionRegion> 
+ 
+  </apex:page>

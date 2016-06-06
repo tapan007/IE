@@ -1,0 +1,13 @@
+<apex:page controller="shareCtrl">
+  <!-- Begin Default Content REMOVE THIS -->
+  <h1>Congratulations</h1>
+  This is your new Page
+  <!-- End Default Content REMOVE THIS -->
+ <apex:pageMessages ></apex:pageMessages>
+  <apex:repeat value="{!listshare}" var="s">
+  <apex:outputText value="{!s.Name}"></apex:outputText>
+  <apex:outputText value="{!s.Email__c}}"></apex:outputText>
+  <apex:outputText value="{!s.Phone_no__c }"></apex:outputText>
+   
+  </apex:repeat>
+</apex:page>

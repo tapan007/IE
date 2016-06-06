@@ -1,0 +1,229 @@
+<apex:page contentType="application/msWord" showHeader="false" sidebar="false" standardStylesheets="false">
+<style>
+li{font-weight:bold;text-align:left;}
+#container{
+    margin:30px;
+} 
+.centerText{
+    text-align:center;  
+}
+.boldText{
+    font-weight:bold;
+}
+tr td:first-child{
+    font-weight:bold;
+}
+.wordMargin{
+	margin:30px;
+}
+.heading{
+  font-size:200%
+}
+</style>
+ <div id="container" style="margin:10px;pading:5px;">
+      <div class="centerText" style="font-weight:bold;font-size:200%">
+         Audit Report
+       </div>
+    <table border="1" cellpadding="0" cellspacing="0" class="wordMargin" style="width:80%;">
+        <tbody>
+            <tr>
+                <td valign="top" width="205" class="boldText">
+                    <p align="left">
+                        Audit Type: 
+                    </p>
+                </td>
+                <td valign="top">
+                    <p align="left">
+                        Vendor Qualification
+                    </p>
+                </td>
+            </tr>
+            <tr style="background-color:#C9D1D6; height:15px;">
+                <td></td>
+                <td ></td>
+            </tr>
+            <tr>
+                <td valign="top" width="205" class="boldText">
+                    <p align="left">
+                        Facility:
+                    </p>
+                </td>
+                <td valign="top" >
+                    <p align="left">
+                        The Landmark @ One Market Street
+                        San Francisco, CA 94105
+                        &amp;
+                        Data Center (address redacted)
+                        San Jose, CA
+                    </p>
+                </td>
+            </tr>
+           <tr style="background-color:#C9D1D6; height:15px;">
+                <td></td>
+                <td ></td>
+            </tr>
+            <tr>
+                <td valign="top" width="205" class="boldText">
+                    <p align="left">
+                        Audit Date(s):
+                    </p>
+                </td>
+                <td valign="top" width="481">
+                    <p align="left">
+                        July 12-13, 2012
+                    </p>
+                </td>
+            </tr>
+            <tr style="background-color:#C9D1D6; height:15px;">
+                <td></td>
+                <td ></td>
+            </tr>
+            <tr>
+                <td valign="top" width="205" class="boldText">
+                    <p align="left">
+                        Purpose:
+                    </p>
+                </td>
+                <td valign="top" width="481">
+                    <p align="left">
+                        Establish and document <em>Salesforce.com</em> as a MySTRO-approved Software-as-a-Service (SaaS) and Platform-as-a-Service (PaaS) provider.
+                    </p>
+                </td>
+            </tr>
+            <tr style="background-color:#C9D1D6; height:15px;">
+                <td></td>
+                <td ></td>
+            </tr>
+            <tr>
+                <td valign="top" width="205" class="boldText">
+                    <p align="left">
+                        Vendor Representatives:
+                    </p>
+                </td>
+                <td width="481">
+                    <p>
+                        · Lokesh Bangalore – Manager, Technology Audit &amp; Compliance
+                    </p>
+                </td>
+            </tr>
+            <tr style="background-color:#C9D1D6; height:15px;">
+                <td></td>
+                <td ></td>
+            </tr>
+            <tr>
+                <td valign="top" width="205" class="boldText">
+                    <p align="left">
+                        MySTRO Attendees:
+                    </p>
+                </td>
+                <td width="481">
+                    <p align="left">
+                        · Ryan E. Ott – Assoc. Director, Software Quality
+                    </p>
+                   
+                </td>
+            </tr>
+           </tbody>
+    </table>
+    <div>
+    <table border="0" cellpadding="0" cellspacing="0" class="wordMargin">
+    <tbody>
+        <tr style="height:25px;">
+                <td></td>
+                <td ></td>
+        </tr>
+            <tr>
+                <td valign="top" width="205" class="boldText">
+                    <p align="left">
+                        Prepared By:
+                    </p>
+                </td>
+                <td valign="top" width="481">
+                    <p align="left">
+                        Ryan E. Ott, Director - Assoc. Director, Software Quality
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top" width="205">
+                </td>
+                <td valign="top" width="481">
+                    <p align="left">
+                        Mary M. Kubilus - Director, Quality Assurance and Compliance
+                    </p>
+                </td>
+            </tr>
+            <tr style="height:25px;">
+                <td></td>
+                <td ></td>
+            </tr>
+            <tr>
+                <td valign="top" width="205" class="boldText">
+                    <p align="left">
+                        Date of Report:
+                    </p>
+                </td>
+                <td valign="top" width="481">
+                    <p align="left">
+                        August 28, 2012
+                    </p>
+                </td>
+            </tr>
+            <tr style="height:25px;">
+                <td></td>
+                <td ></td>
+           </tr>
+            <tr>
+                <td colspan="2">
+                    <hr style="color:black;"/>
+                </td>
+            </tr>
+            <tr style="height:25px;">
+                <td></td>
+                <td ></td>
+           </tr>
+           <tr>
+                <td colspan="2" class="boldText">
+                    <p align="left">
+                     Audit Standards &amp; References:
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <p align="left">
+                             21 CFR Parts 203 &amp; 11, HIPAA/HITECH, SOC-1, OWASP as these apply to the services being supplied to MySTRO.
+                    </p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+    <div>
+        <ol>
+          <li>PURPOSE</li>
+            <p align="left">
+                The purpose of this audit was to establish a baseline vendor qualification for cloud-based Software-as-a
+            </p>
+         
+          <li>OVERVIEW</li>
+            <p align="left">
+                 A two (2)-day vendor qualification audit was conducted at SFDC in San Francisco &amp; San Jose, CA, <strong></strong>
+            </p>
+          <li>PrIOR AuditS</li>
+             <p align="left">
+                One of SFDC’s partners was audited by Total Data Solutions (an inVentiv Health company) in 2010, which included a review of the SFDC colocation in San
+             </p>
+        <li>SCOPE/OBJECTIVE</li>
+            <p align="left">
+                  The objective of this audit was to conduct an IT/computer systems-focused review of SFDC and establish <strong></strong>
+            </p>
+        <li>AUDIT SUMMARY</li>
+            <p align="left">
+                 The SFDC facility at One Market Street location was a secure, spacious, clean, and well-illuminated office
+            </p>
+        </ol>
+    </div>
+    
+   </div>
+</apex:page>

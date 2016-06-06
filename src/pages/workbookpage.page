@@ -1,0 +1,25 @@
+<apex:page Controller="workbook">
+<apex:form id="Describe">
+<apex:pageBlock id="block2" >
+<apex:pageblockbuttons location="top" >
+<apex:commandButton value="Get Describe Object Fields" action="{!showFields}" reRender="panel"/>
+<apex:commandButton value="view html" action="{!viewhtml}" reRender="panel"/>
+<apex:commandButton value="Export" action="{!exportAll}" reRender="panel"/>
+</apex:pageblockbuttons>
+<apex:pageblocksection > 
+<apex:selectList value="{!selectedObjects}" size="20" multiselect="true">
+<apex:selectOptions value="{!objectNames}"/>
+</apex:selectList>
+</apex:pageblocksection>
+<apex:outputPanel id="panel">
+	<apex:repeat value="{!lstfieldnamebysobjectname}" var="sobject">
+	<br/><br/>
+		{!sobject}
+		<apex:repeat value="{!lstfieldnamebysobjectname[sobject]}" var="field">
+			{!field.label}&nbsp;{!field.name}&nbsp;{!field.fieldtype}&nbsp;{!field.isAccessible}&nbsp;{!field.isCustom}&nbsp;
+		</apex:repeat>
+	</apex:repeat>
+</apex:outputPanel>
+</apex:pageBlock>
+</apex:form>
+</apex:page>

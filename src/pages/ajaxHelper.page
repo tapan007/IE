@@ -1,0 +1,4 @@
+<apex:page controller="ajaxHelperCtrl" contentType="text/plain" action="{!getAccountDetails}">
+
+    <apex:outputText value="{!jsonString}" />
+</apex:page>

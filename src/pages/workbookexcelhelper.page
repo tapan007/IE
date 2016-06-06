@@ -1,0 +1,69 @@
+<apex:page controller="workbookhelpercls" contentType="txt/xml#workbook.xls" cache="true">
+    <apex:outputText value="{!xlsHeader}"/>
+    <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+    xmlns:o="urn:schemas-microsoft-com:office:office"
+    xmlns:x="urn:schemas-microsoft-com:office:excel"
+    xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+    xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Styles>
+   <Style ss:ID="s1">
+   <Alignment/>
+   <Borders/>
+   <Font ss:Bold="1"/>
+   <Interior ss:Color='#667081' ss:Pattern='Solid'/>
+    <NumberFormat/>
+    <Protection/>
+     </Style>
+     <Style ss:ID='s2' ss:Name='Maxi'>
+    <Alignment ss:Vertical='Bottom'/>
+    <Borders/>
+    <Font ss:Size="25" ss:Bold="1" ss:Color='#000080'/>
+    <Interior ss:Color='#99CCFF' ss:Pattern='Solid'/>
+    <NumberFormat/>
+    <Protection/>
+    </Style>
+   </Styles>
+   
+    
+<apex:repeat value="{!lstfieldnamebysobjectname}" var="sobject"> 
+      <Worksheet ss:Name="{!sobject}">
+      
+      <Table x:FullColumns="1" x:FullRows="1">
+        
+      <Column ss:Width="170"/> 
+      <Column ss:Width="170"/>
+      <Column ss:Width="130"/>
+      <Column ss:Width="100"/>
+      <Column ss:Width="80"/>
+      <Column ss:Width="80"/>
+       <Row>
+        <Cell ss:StyleID="s2" ss:MergeAcross="5"><Data ss:Type="String" >Object : {!UPPER(sobject)}</Data></Cell>
+      </Row>
+      <Row>
+        <Cell ss:StyleID="s1" ><Data ss:Type="String" >Label</Data></Cell>
+        <Cell ss:StyleID="s1" ><Data ss:Type="String" >Api Name</Data></Cell>
+        <Cell ss:StyleID="s1" ><Data ss:Type="String" >Field Type</Data></Cell>
+        <Cell ss:StyleID="s1" ><Data ss:Type="String" >Custom/Standard</Data></Cell>
+        <!-- <Cell ss:StyleID="s1" ><Data ss:Type="String" >Read</Data></Cell> -->
+        <!-- <Cell ss:StyleID="s1" ><Data ss:Type="String" >Write</Data></Cell> -->
+        <Cell ss:StyleID="s1" ><Data ss:Type="String" >Length</Data></Cell>
+      </Row>
+      <apex:repeat value="{!lstfieldnamebysobjectname[sobject]}" var="field">
+          <Row>
+             <Cell><Data ss:Type="String">{!field.label}</Data></Cell>
+             <Cell><Data ss:Type="String">{!field.name}</Data></Cell>
+             <Cell><Data ss:Type="String">{!field.fieldtype}</Data></Cell>
+             <Cell><Data ss:Type="String">{!IF(field.isCustom,'Custom','Standard')}</Data></Cell>
+             <!-- <Cell><Data ss:Type="String">{!field.isAccessible}</Data></Cell> -->
+             <!-- <Cell><Data ss:Type="String">{!field.isUpdateable}</Data></Cell> -->
+             <Cell><Data ss:Type="String">{!field.length}</Data></Cell>
+         </Row>
+     </apex:repeat>
+     </Table>
+     
+     </Worksheet>
+ 
+ </apex:repeat>
+ 
+</Workbook>
+</apex:page>

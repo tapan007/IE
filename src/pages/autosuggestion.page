@@ -1,0 +1,192 @@
+<apex:page standardStylesheets="false" showHeader="false" docType="html-5.0" >
+ 
+  <apex:includeScript value="{!URLFOR($Resource.jQueryPlugin,  'js/jquery-1.7.1-jquery.min.js')}"/>
+
+  <style>
+    #container
+    {
+        margin:50px; padding:10px; width:460px
+    }
+    #contentbox
+    {
+        min-width:458px; min-height:50px;
+        width:auto; height:auto;
+        border:solid 2px #333;
+        font-family:Arial, Helvetica, sans-serif;
+        font-size:14px;
+        margin-bottom:6px;
+        text-align:left;
+    }
+    #msgbox
+    {
+        border:solid 1px #dedede;padding:5px;
+        display:none;background-color:#f2f2f2
+    }
+    #display
+    {
+        display:none;
+        border-left:solid 1px #dedede;
+        border-right:solid 1px #dedede;
+        border-bottom:solid 1px #dedede;
+        overflow:auto;
+        position: absolute;
+        z-index: 1000;
+    }
+    .display_box
+    {
+        padding:4px; border-top:solid 1px #dedede; font-size:12px; height:auto;
+    }
+    .display_box:hover
+    {
+        background:#3b5998;
+        color:#FFFFFF;
+    }
+    .image
+    {
+        width:25px; float:left; margin-right:6px
+    }
+    .red{
+        color:red;
+    }
+  </style>
+  
+  <script type="text/javascript">
+        
+        $(document).ready(function()
+        {
+          var mousePosition = {x:0, y:0};
+            $(document).on('mousemove',function(mouseMoveEvent){
+                    mousePosition.x = mouseMoveEvent.pageX;
+                    mousePosition.y = mouseMoveEvent.pageY;
+            });
+             start=/@/ig; // @ Match
+             word=/@(\w+)/ig; //@abc Match
+
+            $("#contentbox").on("keyup",function(evt) 
+            {
+                //alert(evt.keyCode);
+               
+                    
+                
+                var content=$(this).text(); //Content Box Data
+                var pos = getPosition(this);
+                
+                var go= content.match(start); //Content Matching @
+                var name= content.match(word); //Content Matching @abc
+                var dataString = 'searchword='+ name;
+                //alert(name);
+                //If @ available
+                if(go != null && go != '' && go.length>0)
+                {
+                    $("#msgbox").slideDown('show');
+                    $("#display").slideUp('show');
+                    $("#display").css("top",pos.y + 20);
+                    $("#display").css("left",pos.x + 20);
+                    $("#msgbox").html("Searching matching Template...");
+                    //if @abc avalable
+                    if(name != null && name != '' && name.length>0)
+                    {
+                        
+                       
+                        $.ajax({
+                            type: "GET",
+                            url: "/apex/autosuggestionHelper?searchword="+ name, // Database name search 
+                            cache: false,
+                            success: function(data)
+                            {
+                                
+                                var dataJson = JSON.parse(data);
+                                var htmlBody = '';
+                                $.each(dataJson,function(index, value){
+                                  
+                                   htmlBody += '<div class="display_box" >' +'<a href="#" class="addname" title="'+value.Id
+                                               +'" >'+ value.Name+ '</a>' + '</div>';
+                                   
+                                });
+                                
+                                $("#msgbox").hide();
+                                $("#display").html(htmlBody ).show(selectId);
+                            }
+                        });
+                        
+                         /*$.ajax({
+                            type: "GET",
+                            url: "/apex/getEmailBodyHelper?id=" + name, // Database name search 
+                            cache: false,
+                            success: function(data)
+                            {
+                               
+                                if(data != null && data != '' && data.trim().length > 0){
+                                
+                                    var old=$("#contentbox").html();
+                                    var content=old.replace(word," "); //replacing @abc to (" ") space
+                                    $("#contentbox").html(content);
+                                    //var E="<a class='red' contenteditable='false' href='#' >"+data+"</a>";
+                                    $("#contentbox").append(data);
+                                    $("#display").hide();
+                                    $("#msgbox").hide();
+                                }else{
+                                     $("#msgbox").html("No Matching found...").addClass("red");
+                                }
+                                
+                            }
+                       });*/
+                        
+                    }
+                }
+            return false;
+           
+     });
+
+    //Adding result name to content box.
+    
+   
+    });
+    function selectId(){
+            
+         $(".addname").on("click",function() 
+         {
+            
+            var username=$(this).attr('title');
+            
+             $.ajax({
+                        type: "GET",
+                        url: "/apex/getEmailBodyHelper?id=" + username , // Database name search 
+                        cache: false,
+                        success: function(data)
+                        {
+                            
+                            var old=$("#contentbox").html();
+                            var content=old.replace(word," "); //replacing @abc to (" ") space
+                            $("#contentbox").html(content);
+                            //var E="<a class='red' contenteditable='false' href='#' >"+data+"</a>";
+                            $("#contentbox").append(data);
+                            $("#display").hide();
+                            $("#msgbox").hide();
+                            
+                        }
+                   });
+           
+        });
+    }
+    function getPosition(element) {
+        var xPosition = 0;
+        var yPosition = 0;
+      
+        while(element) {
+            xPosition += (element.offsetLeft - element.scrollLeft + element.clientLeft);
+            yPosition += (element.offsetTop - element.scrollTop + element.clientTop);
+            element = element.offsetParent;
+        }
+        return { x: xPosition, y: yPosition };
+    }
+  </script>
+  <div id="container">
+    <div id="contentbox" contenteditable="true">
+    </div>
+    <div id='display'>
+    </div>
+    <div id="msgbox">
+    </div>
+  </div>
+</apex:page>

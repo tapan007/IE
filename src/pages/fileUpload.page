@@ -1,0 +1,5 @@
+<apex:page >
+
+          
+     <c:fileUpload parentId="001i000000YrDKe"/>
+</apex:page>

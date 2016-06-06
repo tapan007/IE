@@ -1,0 +1,41 @@
+<apex:page showheader="false" sidebar="false" standardStyleSheets="false" >
+    <head>
+    <title>Thank You</title>        
+    </head>
+    
+    
+    <style>
+       /* body{
+           /* background-color: rgb(242, 242, 242) !important;*/
+        }
+
+        .mainBlock{
+              padding: 3%;
+              background: #fff;
+              //color: #333;
+              color: red;
+              /*font: 1.156em/1.3 Arial,Helvetica,sans-serif;
+               font-family: Arial, Helvetica, sans-serif;*/
+               font-family: "Calisto MT","Bookman Old Style",Bookman,"Goudy Old Style",Garamond,"Hoefler Text","Bitstream Charter",Georgia,serif
+              font-size-adjust: 0.45;
+        }
+        
+        strong{
+              padding: 3%;
+              background: #fff;
+              color: #333;
+              font: 3em/1.3 Arial,Helvetica,sans-serif;
+              font-size-adjust: 0.80;
+              font-weight: bold;
+        }
+        
+    </style>
+    <apex:form id="form1">
+        
+        <apex:outputPanel layout="block" id="mainblock" styleClass="mainBlock">
+          
+        </apex:outputPanel>
+        
+    </apex:form>
+   
+</apex:page>

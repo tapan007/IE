@@ -1,0 +1,30 @@
+<apex:page docType="html-5.0" >
+  <html ng-app="restApiApp" >
+    <head>
+      <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"/>
+    </head>
+    <body ng-controller="MainCtrl">
+    <h1>Test REST API from JavaScript with AngularJS</h1>
+    <div ng-init="sessionId='{!$Api.Session_ID}'; url='/services/data/v30.0/query?q=SELECT+Name+FROM+Account+LIMIT+10'">
+      <input id="query" size="120" value="{{url}}" ng-model="url"/>
+      <button  ng-click="submit()">Submit</button>
+      <p>Results:</p>
+        <pre>{{results | json}}</pre>
+    </div>
+    </body>
+  <script>
+    angular.module('restApiApp', []).controller('MainCtrl', function($scope, $http) {
+      $scope.results = ""; // sessionId, url from ng-init
+  
+      $scope.submit = function() {
+        $http.defaults.headers.common.Authorization = 'Bearer ' + $scope.sessionId;
+        $http.get($scope.url).then(function(response) {
+          $scope.results = response.data;
+        }, function(errResponse) {
+          console.log('Error while fetching data');
+        });
+      };
+    });
+  </script>
+  </html>
+</apex:page>
