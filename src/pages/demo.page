@@ -1,11 +1,7 @@
-<<<<<<< HEAD
 <apex:page standardController="Account" recordSetvar="accounts" sidebar="false">
 <script src="/support/console/34.0/integration.js" type="text/javascript"></script>
 
 <h1>Demo to from git tapan</h1>
-
-
-
 
 <br/>
 
