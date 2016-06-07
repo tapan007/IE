@@ -418,8 +418,9 @@
                             <then>
                                 <sf:deploy sessionId="${sessionId}" 
                                            serverurl="${sf.instanceurl}" 
-                                           maxPoll="@{maxPoll}"
-                            deployRoot="@{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name}" 
+                                           pollWaitMillis = "${sf.pollWaitMillis}"
+                                           maxPoll="${sf.maxPoll}"
+                            deployRoot="@{packageXmlFolder}/${sf.removecodepkg.fld.name}" 
                                            ignoreWarnings="true" 
                                            rollbackOnError="true">
                                 </sf:deploy>
