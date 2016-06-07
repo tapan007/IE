@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="IETest" basedir="." xmlns:sf="antlib:com.salesforce">
-
+    
+    <property file="../build.properties"/>
     <property file="default.properties"/>
     
 	<property environment="env"/>
     
+    <!-- deploymentExcepions.xml -->
+	<!-- <import file="./build-resource/deploymentExceptions.xml"/> -->
     
     <!-- Define salesforce migration tool task  -->
     <taskdef resource="com/salesforce/antlib.xml" uri="antlib:com.salesforce">
@@ -17,7 +20,10 @@
     <taskdef resource="net/sf/antcontrib/antlib.xml" 
               classpath="${ant.contrib.jar}" />
 	
-    
+    <path id="Encodebase64.path">
+        <pathelement location="${ant.java.commons-codec.jar}"/>
+        <pathelement location="${ant.git.salesforce.incremental.jar}"/>
+    </path>
     <!-- Define ant http task to make http get and post to salesforce for data -->  
 	<taskdef name="http" 
              classname="org.missinglink.ant.task.http.HttpClientTask" classpath="${ant.http.jar}"/> 
@@ -37,8 +43,8 @@
              classname="CopyFilesUsingPackageXML" classpath="${ant.git.salesforce.incremental.jar}"/>
     
     <!-- Define custom EncodeBase64 task to convert zip back up to base64 so that it can be post to SF -->
-    <taskdef name="EncodeBased64" 
-             classname="EncodeBased64Binary" classpath="${ant.svnsalesforce.jar}" />
+    <taskdef name="EncodeBased64" classpathref="Encodebase64.path"
+             classname="EncodeBased64Binary"  />
     
     <!-- Login into Salesforce and return the session Id and serverUrl using http task-->
     <macrodef name="login">
@@ -216,10 +222,20 @@
                          ]]>
                     </script>
                     <echo>${line.separator} *** Build Record id Created *** </echo>
-                    <EncodeBased64 srcPatch="@{backupfilepath}" retproperty="base64EncodedValue"/>         
-                    <createAttachment body="${base64EncodedValue}" sessionId="${sessionId}" 
-                                      recordId="${buildrecordId}" endpoint="@{endpointForBuildAttachment}"/>
-                    <echo>${line.separator} *** Backup attached to  build record *** </echo>
+                    <if>
+                        <available file="@{backupfilepath}"/>
+                        <then>
+                            <EncodeBased64 srcPatch="@{backupfilepath}" retproperty="base64EncodedValue"/> 
+                    
+                            <createAttachment body="${base64EncodedValue}" sessionId="${sessionId}" 
+                                          recordId="${buildrecordId}" />
+                            <echo>${line.separator} *** Packagexml  attached to  build record *** </echo>
+                        </then>
+                        <else>
+                            <echo>${line.separator} *** No package xml found for attachment  *** </echo>
+                        </else>
+                    </if>
+                    
                 </then>
                 <else>
                     <!-- Parse login error message and fail build -->
@@ -289,154 +305,170 @@
             </script>
             
             <!-- check if the start revision set then take second last commit id -->
-            <echo> ${line.separator} *** start.revision ${start.revision} ***</echo>
+            
+           
             <if>
 
                 <equals arg1="${is.lastcommit.id.not.found}" arg2="true"/>
                
                 <then>
-                    <git command="log" outputproperty="start.revision" >
-                        <args>
-                            <arg value="-n" />
-                            <arg value="1" />
-                            <arg value="--skip" /> 
-                            <arg value="1" /> 
-                            <arg value="--pretty=format:%H" />  
-                        </args>
-                    </git>
+                    <echo> ${line.separator} *** last commit id not found from salesforce ***</echo>
+                    
+                    <!-- need to be updated after the call-->
+                    <!-- set is deployed property so that build record will be created -->
+                    <property name="is.deployed" value="true"/>
                 </then>
                 <else>
                    
-                </else>
-             </if>
+                    <echo> ${line.separator} *** last revision found in Salesforce : ${start.revision} </echo>
+                    <echo> ${line.separator} *** check for ${start.revision} and ${end.revision} ***</echo>
+                    <delete dir="@{packageXmlFolder}"/>
+                    <delete dir="@{diffLogFolder}"/>
+                    <delete dir="@{deploymentFolderPath}"/>
+                    <mkdir dir="@{packageXmlFolder}"/>
+                    <mkdir dir="@{diffLogFolder}"/>
+                    <mkdir dir="@{deploymentFolderPath}"/>
             
-      
-       
+                    <!-- getting diff log from git beween two version using svn commandline "-->
+                    <echo> ${line.separator} *** Geting the git change log between ${start.revision} and ${end.revision} ***</echo>
             
-            <echo> ${line.separator} *** check for ${start.revision} and ${end.revision} ***</echo>
-     
-            <delete dir="@{packageXmlFolder}"/>
-            <delete dir="@{diffLogFolder}"/>
-            <delete dir="@{deploymentFolderPath}"/>
-            
-            <mkdir dir="@{packageXmlFolder}"/>
-            <mkdir dir="@{diffLogFolder}"/>
-            <mkdir dir="@{deploymentFolderPath}"/>
-            
-            <!-- getting diff log from git beween two version using svn commandline "-->
-            <echo> ${line.separator} *** Geting the git change log between ${start.revision} and ${end.revision} ***</echo>
-            
-            <exec executable="git"  output="@{diffLogFolder}/${git.difflog.name}" >
-                <arg line="diff"/>
-                <arg line="--name-status"/>
-                <arg line="${start.revision}"/>
-                <arg line="${end.revision}"/>
-                <arg line="--"/>
-                <arg line="${git.src}"/>
-                
-                 
-       
-            </exec>
+                    <exec executable="git"  output="@{diffLogFolder}/${git.difflog.name}" >
+                        <arg line="diff"/>
+                        <arg line="--name-status"/>
+                        <arg line="${start.revision}"/>
+                        <arg line="${end.revision}"/>
+                        <arg line="--"/>
+                        <arg line="${git.src}"/>
+                    </exec>
          
-            <echo>${line.separator} *****Diff change log created *******</echo>
+                    <echo>${line.separator} *****Diff change log created *******</echo>
             
-            <condition property="fs.length.empty">
-                <length mode="all" when="eq" length="0" file="@{diffLogFolder}/${git.difflog.name}">
-                </length>
-            </condition>
-            <!-- call the java code to prepare package xml from diff log-->
-            <if>
-             <equals arg1="${fs.length.empty}" arg2="true" />
-             <then>
-               <echo message="${line.separator} ${line.separator}  *****There are no changes in Git for deployment*****" />
-             </then>
-             <else>
-                <!-- just for debuging we will delete the file--> 
-                <!-- start -->
-                <loadfile property="file" srcfile="@{diffLogFolder}/${git.difflog.name}"/>
-                 <for param="line" list="${file}" delimiter="${line.separator}">
-                      <sequential>
-                        <echo>@{line}</echo>
-                      </sequential>
-                 </for>
-                <!-- end -->
-             </else>
-            </if>
+                    <condition property="fs.length.empty">
+                        <length mode="all" when="eq" length="0" file="@{diffLogFolder}/${git.difflog.name}">
+                        </length>
+                    </condition>
+                    <!-- call the java code to prepare package xml from diff log-->
+                    <if>
+                     <equals arg1="${fs.length.empty}" arg2="true" />
+                     <then>
+                       <echo message="${line.separator} ${line.separator}  *****There are no changes in Git for deployment*****" />
+                     </then>
+                     <else>
+                        <!-- just for debuging we will delete the file--> 
+                        <!-- start -->
+                        <loadfile property="file" srcfile="@{diffLogFolder}/${git.difflog.name}"/>
+                         <for param="line" list="${file}" delimiter="${line.separator}">
+                              <sequential>
+                                <echo>@{line}</echo>
+                              </sequential>
+                         </for>
+                        <!-- end -->
+                     </else>
+                    </if>
             
-            <echo>${line.separator} ***preparing package xml*** </echo>
+                    <echo>${line.separator} ***preparing package xml*** </echo>
             
-            <preparepackagexml svnDiffLogUrl="@{diffLogFolder}/${git.difflog.name}"
-                               packageXmlUrl="@{packageXmlFolder}"/>
+                    <preparepackagexml svnDiffLogUrl="@{diffLogFolder}/${git.difflog.name}"
+                                       packageXmlUrl="@{packageXmlFolder}"/>
             
-            <echo>***load package xml folder @{packageXmlFolder}/${sf.deploycodepkg.fld.name}/${packagexml.name} *** </echo>
-            <loadfile property="packagexml" 
+                    <echo>***load package xml folder @{packageXmlFolder}/${sf.deploycodepkg.fld.name}/${packagexml.name} *** </echo>
+                    <loadfile property="packagexml" 
                                   srcFile="@{packageXmlFolder}/${sf.deploycodepkg.fld.name}/${packagexml.name}"  failonerror="false"/>
 
-            <echo>${line.separator} ***load package xml folder  **** ${line.separator}</echo>
-            <echo>${line.separator} ${packagexml} ${line.separator} </echo>
-            <echo>***load desturctive package xml folder @{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name} *** </echo>
-            <loadfile property="desctucitvepackagexml" 
-                                  srcFile="@{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name}"  failonerror="false"/>
+                    <echo>${line.separator} ***load package xml folder  **** ${line.separator}</echo>
+                    <echo>${line.separator} ${packagexml} ${line.separator} </echo>
+                    <echo>***load desturctive package xml folder @{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name} *** </echo>
+                    <loadfile property="desctucitvepackagexml" 
+                                  srcFile="@{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name}"  
+                              failonerror="false"/>
 
-            <echo>${line.separator} ***load destrucitve package xml folder  **** ${line.separator}</echo>
-            <echo>${line.separator} ${desctucitvepackagexml} ${line.separator} </echo>
+                    <echo>${line.separator} ***load destrucitve package xml folder  **** ${line.separator}</echo>
+                    <echo>${line.separator} ${desctucitvepackagexml} ${line.separator} </echo>
             
-            <if>
-                <available file="@{packageXmlFolder}/${sf.deploycodepkg.fld.name}/${packagexml.name}"/>
-                <then>
-                    <copyfiles srcUrl="${git.src}" destUrl="@{deploymentFolderPath}"
-                       packageXmlDir="@{packageXmlFolder}"/>
-                    <echo>${line.separator} Deployment folder created </echo>
-                    <echo>${line.separator} ****start deployment folder**** ${line.separator}</echo>
+                    <if>
+                        <available file="@{packageXmlFolder}/${sf.deploycodepkg.fld.name}/${packagexml.name}"/>
+                        <then>
+                            <copyfiles srcUrl="${git.src}" destUrl="@{deploymentFolderPath}"
+                               packageXmlDir="@{packageXmlFolder}"/>
+                            <echo>${line.separator} Deployment folder created </echo>
+                        </then>
+
+                    </if>
+                    <echo>${line.separator} ****start deployment **** ${line.separator}</echo>
                     <!-- code deploymnet -->
+                    
                     <if>
                         <available file="@{deploymentFolderPath}/${packagexml.name}"/>
                         <then>
                             <sf:deploy  sessionId="${sessionId}"
-                                pollWaitMillis = "sf.pollWaitMillis"
+                                pollWaitMillis = "${sf.pollWaitMillis}"
                                 maxPoll = "${sf.maxPoll}"
                                 autoUpdatePackage = "true"
-                                serverurl="${sf.serverurl}" 
+                                serverurl="${sf.instanceurl}" 
                                 ignoreWarnings="true" 
                                 deployRoot="@{deploymentFolderPath}"
                                 rollbackOnError="true">
                             </sf:deploy>
+                            <property name="is.deployed" value="true"/>
                         </then>
-
-                            <elseif>
-                                <echo>***Nothing found for deploy. Checking for undeploy *** </echo>
-                                <available                                            file="@{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name}"/>
-                                <then>
-                                    <sf:deploy sessionId="${sessionId}" 
-                                               serverurl="@{serverurl}" 
-                                               maxPoll="@{maxPoll}"
-                                deployRoot="@{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name}" 
-                                               ignoreWarnings="true" 
-                                               rollbackOnError="true">
-                                    </sf:deploy>
-                                </then>
-                            </elseif>
-
-                            <else>
-                                <echo>***Nothing found for Deployment *** </echo>
-                            </else>
-                        </if>
+                
+                        <elseif>
                     
-                </then>
-               
-            </if>
+                            <available                                            file="@{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name}"/>
+                            <then>
+                                <sf:deploy sessionId="${sessionId}" 
+                                           serverurl="${sf.instanceurl}" 
+                                           maxPoll="@{maxPoll}"
+                            deployRoot="@{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name}" 
+                                           ignoreWarnings="true" 
+                                           rollbackOnError="true">
+                                </sf:deploy>
+                                <property name="is.deployed" value="true"/>
+                            </then>
+                        </elseif>
+                        <else>
+                            <echo>***Nothing found for Deployment *** </echo>
+                        </else>
+                    </if>  
+                    
+                    
+                </else>
+                
+             </if>
             
-            <zip destfile="@{packageXmlFolder}/${sf.backup.fld.name}" basedir="@{packageXmlFolder}"/> 
-            <createBuildRecord
-                sessionId = "${sessionId}"
-                startrev = "${start.revision}"
-                endrev = "${end.revision}"
-                buildrecordId = "buildrecordId"
-                backupfilepath = "@{packagexmlDir}/${sf.backup.fld.name}" />  
-             
+            <trycatch property="build.record.exception" >
+              
+                <try>
+                    
+                  <if>
+                    <equals arg1="${is.deployed}" arg2="true" />
+                        <then>
+                            <zip destfile="@{packageXmlFolder}/${sf.backup.fld.name}" basedir="@{packageXmlFolder}"/> 
+                            <createBuildRecord
+                                sessionId = "${sessionId}"
+                                startrev = "${start.revision}"
+                                endrev = "${end.revision}"
+                                buildrecordId = "buildrecordId"
+                                backupfilepath = "@{packageXmlFolder}/${sf.backup.fld.name}" />  
+                        </then>
+                  </if>
+                    
+                </try>
+
+              <catch>
+                 <echo message="${line.separator} ***** WARNING -Build record creation in SF failed.${line.separator} "
+                       level="warning"/>
+              </catch>
+  
+            </trycatch>
+            
         </sequential>
+        
+        
+        
     </macrodef>
    
+    
     <macrodef name="deploytosf" description="it will deploy the code from CodeHub to Salesforce ">
         <!-- Salsforce parameters -->
         <attribute name="sfusername" description="Salesforce user name."/>
@@ -481,7 +513,19 @@
        
     </macrodef>
     
-    
+     <macrodef name="git">
+        <attribute name="command" />
+        <attribute name="outputproperty" default="dummy" />
+        <element name="args" optional="true" />
+        <sequential>
+
+            <echo message="git @{command}" />
+            <exec executable="git"  failonerror="true" outputproperty="@{outputproperty}">
+                <arg value="@{command}" />
+                <args/>
+            </exec>
+        </sequential>
+    </macrodef>
     
     <target name="deploy-to-sf-from-codehub" >      
         
@@ -496,18 +540,8 @@
           
     </target>
     
-    <macrodef name="git">
-        <attribute name="command" />
-        <attribute name="outputproperty" default="dummy" />
-        <element name="args" optional="true" />
-        <sequential>
 
-            <echo message="git @{command}" />
-            <exec executable="git"  failonerror="true" outputproperty="@{outputproperty}">
-                <arg value="@{command}" />
-                <args/>
-            </exec>
-        </sequential>
-    </macrodef>
+    
+   
     
 </project>
