@@ -35,7 +35,11 @@
     <!-- Define custom copyfiles task to prepare deployment folder from svn using package xml-->
     <taskdef name="copyfiles" 
              classname="CopyFilesUsingPackageXML" classpath="${ant.git.salesforce.incremental.jar}"/>
- 
+    
+    <!-- Define custom EncodeBase64 task to convert zip back up to base64 so that it can be post to SF -->
+    <taskdef name="EncodeBased64" 
+             classname="EncodeBased64Binary" classpath="${ant.svnsalesforce.jar}" />
+    
     <!-- Login into Salesforce and return the session Id and serverUrl using http task-->
     <macrodef name="login">
         <attribute name="username" description="Salesforce user name."/>
@@ -143,6 +147,93 @@
         </sequential>
     </macrodef>
     
+    <!-- this macrodef will attach the package xml and other folders to build record id -->
+    
+    <macrodef name="createAttachment">
+
+		<attribute name="body" description="Property to store the base 64 encoded data."/>
+        <attribute name="sessionId" description="Property to store the base 64 encoded data."/>
+        <attribute name="recordId" description="Property to store the base 64 encoded data." />
+		<sequential>
+		
+            <http url="${sf.attachment.endpoint}" printresponse="false" printrequest="false" expected="201" 
+                  method="POST" entityProperty="recordCreateResponse" statusProperty="loginResponseStatus" failonunexpected="true">
+		    	<headers>
+		    		<header name="Content-Type" value="application/json"/>
+		    		<header name="Authorization" value="Bearer @{sessionId}"/>
+		    	</headers>
+		    	<entity>
+		    		{
+		    			"ParentId": "@{recordId}",
+		    			"Name": "Backbup.zip",
+		    			"Body" : "@{body}"
+		    		}
+		    	</entity>
+		    </http>
+		</sequential>		
+	</macrodef>
+    
+    
+    
+    <!-- this macrodef will create a build record in salesforce with updated revision id -->
+    
+    
+    <macrodef name="createBuildRecord" description="Provides access to the Salesforce Tooling REST API StaticResource resource">
+       
+        <attribute name="sessionId" description="Salesforce user name."/>
+        <attribute name="startrev" description="Salesforce password."/>
+        <attribute name="endrev" description="Salesforce password."/>
+        <attribute name="buildrecordId" description="Salesforce password."/>  
+        <attribute name="backupfilepath" description="D:/ANT SF/salesforce_ant_33.0/SVNANT/backup/code.zip"/>
+        <sequential>
+        
+        		
+       
+		    <http url="${sf.buildrecord.endpoint}" printresponse="false" 
+                  printrequest="false" expected="201" method="POST"  failonunexpected="false"
+                  entityProperty="recordCreateResponse" statusProperty="recordResponseStatus" >
+		    	<headers>
+		    		<header name="Content-Type" value="application/json"/>
+		    		<header name="Authorization" value="Bearer @{sessionId}"/>
+		    	</headers>
+		    	<entity>
+		    		{
+		    			"RevisionStart__c": "@{startrev}",
+		    			"RevisionEnd__c": "@{endrev}"		    			
+		    		}
+		    	</entity>
+		    </http>
+            <if>
+                <!-- Success? -->
+                <equals arg1="${recordResponseStatus}" arg2="201"/>
+                <then>
+                    <!-- Parse JSON response and set properites -->
+                    <script language="javascript">
+                        <![CDATA[
+                            var response = eval('('+project.getProperty('recordCreateResponse')+')');
+
+                               project.setProperty('@{buildrecordId}' , response.id);
+                         ]]>
+                    </script>
+                    <echo>${line.separator} *** Build Record id Created *** </echo>
+                    <EncodeBased64 srcPatch="@{backupfilepath}" retproperty="base64EncodedValue"/>         
+                    <createAttachment body="${base64EncodedValue}" sessionId="${sessionId}" 
+                                      recordId="${buildrecordId}" endpoint="@{endpointForBuildAttachment}"/>
+                    <echo>${line.separator} *** Backup attached to  build record *** </echo>
+                </then>
+                <else>
+                    <!-- Parse login error message and fail build -->
+                    <echo message="${line.separator} ***** WARNING -Build record creation in SF failed.${line.separator} " level="warning"/>
+                    <echo message="${line.separator}**** WARNING Response:  ${recordCreateResponse}***** ${line.separator} " 
+                          level="warning" />
+                    <echo message="${line.separator}**** WARNING Please manullay create build record with svn version in SF***** ${line.separator} " 
+                          level="warning" />
+                </else>
+            </if>
+            
+           
+		</sequential>
+	</macrodef>
     
     
     
@@ -296,15 +387,52 @@
                     <copyfiles srcUrl="${git.src}" destUrl="@{deploymentFolderPath}"
                        packageXmlDir="@{packageXmlFolder}"/>
                     <echo>${line.separator} Deployment folder created </echo>
+                    <echo>${line.separator} ****start deployment folder**** ${line.separator}</echo>
+                    <!-- code deploymnet -->
+                    <if>
+                        <available file="@{deploymentFolderPath}/${packagexml.name}"/>
+                        <then>
+                            <sf:deploy  sessionId="${sessionId}"
+                                pollWaitMillis = "sf.pollWaitMillis"
+                                maxPoll = "${sf.maxPoll}"
+                                autoUpdatePackage = "true"
+                                serverurl="${sf.serverurl}" 
+                                ignoreWarnings="true" 
+                                deployRoot="@{deploymentFolderPath}"
+                                rollbackOnError="true">
+                            </sf:deploy>
+                        </then>
 
+                            <elseif>
+                                <echo>***Nothing found for deploy. Checking for undeploy *** </echo>
+                                <available                                            file="@{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name}"/>
+                                <then>
+                                    <sf:deploy sessionId="${sessionId}" 
+                                               serverurl="@{serverurl}" 
+                                               maxPoll="@{maxPoll}"
+                                deployRoot="@{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name}" 
+                                               ignoreWarnings="true" 
+                                               rollbackOnError="true">
+                                    </sf:deploy>
+                                </then>
+                            </elseif>
+
+                            <else>
+                                <echo>***Nothing found for Deployment *** </echo>
+                            </else>
+                        </if>
+                    
                 </then>
-                <else>
-                    <echo>***Nothing found for deploy. Checking for undeploy *** </echo>
-                </else>
+               
             </if>
             
-            
-            
+            <zip destfile="@{packageXmlFolder}/${sf.backup.fld.name}" basedir="@{packageXmlFolder}"/> 
+            <createBuildRecord
+                sessionId = "${sessionId}"
+                startrev = "${start.revision}"
+                endrev = "${end.revision}"
+                buildrecordId = "buildrecordId"
+                backupfilepath = "@{packagexmlDir}/${sf.backup.fld.name}" />  
              
         </sequential>
     </macrodef>
