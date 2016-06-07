@@ -2,12 +2,13 @@
 <apex:page standardController="Account" recordSetvar="accounts" sidebar="false">
 <script src="/support/console/34.0/integration.js" type="text/javascript"></script>
 
-<h1>Demo to from git hub test 123</h1>
+<h1>Demo to from git tapan</h1>
 
 
 
 
 <br/>
+
   <apex:pageBlock title="Viewing Accounts">
   <apex:form id="theForm">
     <apex:pageBlockTable value="{!accounts}" var="acc" id="thetable">
@@ -18,25 +19,5 @@
             </apex:pageBlockTable>
   </apex:form> 
   </apex:pageBlock>
-=======
-<apex:page standardController="Account" recordSetvar="accounts" sidebar="false">
-<script src="/support/console/34.0/integration.js" type="text/javascript"></script>
 
-<h1>Demo to </h1>
-
-
-
-
-<br/>
-  <apex:pageBlock title="Viewing Accounts">
-  <apex:form id="theForm">
-    <apex:pageBlockTable value="{!accounts}" var="acc" id="thetable">
-                <apex:column value="{!acc.id}" id="col1">
-                      
-                 </apex:column>
-                 <apex:column value="{!acc.name}" id="col2" onclick="alert('{!$Component.thetable.col2}');"/>
-            </apex:pageBlockTable>
-  </apex:form> 
-  </apex:pageBlock>
->>>>>>> branch 'master' of https://github.com/tapan007/IE.git
 </apex:page>
