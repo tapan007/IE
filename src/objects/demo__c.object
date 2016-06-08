@@ -72,7 +72,17 @@
         <trackTrending>false</trackTrending>
         <type>EncryptedText</type>
     </fields>
-    
+    <fields>
+        <fullName>link__c</fullName>
+        <externalId>false</externalId>
+        <formula>HYPERLINK( Test__c ,  Name  )</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>link</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
     <fields>
         <fullName>testing__c</fullName>
         <externalId>false</externalId>
