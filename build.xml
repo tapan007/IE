@@ -45,7 +45,11 @@
     <!-- Define custom EncodeBase64 task to convert zip back up to base64 so that it can be post to SF -->
     <taskdef name="EncodeBased64" classpathref="Encodebase64.path"
              classname="EncodeBased64Binary"  />
-    
+
+    <!-- Define custom mergePackageXml task to merge OneOff-package-xml with package-xml-->
+    <taskdef name="mergePackageXml" 
+             classname="MergePackageXML" classpath="${ant.git.salesforce.incremental.jar}"/>
+			 
     <!-- Login into Salesforce and return the session Id and serverUrl using http task-->
     <macrodef name="login">
         <attribute name="username" description="Salesforce user name."/>
@@ -263,7 +267,7 @@
         <attribute name="sfusername" description="Salesforce user name."/>
         <attribute name="sfpassword" description="Salesforce password."/>
         <attribute name="sfloginUrl" description="Salesforce login URL"/>
-   
+		<attribute name="isFull"  default="false" description="Full or Incremental deployment. Default is Incremental."/> 
  
         <sequential>
        
@@ -283,44 +287,54 @@
             
             <echo>${line.separator} *** Conected to Salesforce **** </echo>
             
-            <echo>${line.separator} *** Get the last commit id deployed to SF </echo>
-
             <!-- SOQL to salesforce to get latest revision deployed to salesforce -->
+			<if>
+                <equals arg1="@{isFull}" arg2="false"/>
+           
+                <then>
+					<echo>${line.separator} *** Incremental deployment started... </echo>	
+					<echo>${line.separator} *** Get the last commit id deployed to SF </echo>	
+					<runQuery
+						sessionId="${sessionId}"
+						serverUrl="${serverUrl}"
+						queryResult="buildDetails"
+						query="SELECT Id, RevisionStart__c,RevisionEnd__c FROM BuildDetails__c  order by CreatedDate DESC LIMIT 1"/>
 
-            <runQuery
-                sessionId="${sessionId}"
-                serverUrl="${serverUrl}"
-                queryResult="buildDetails"
-                query="SELECT Id, RevisionStart__c,RevisionEnd__c FROM BuildDetails__c  order by CreatedDate DESC LIMIT 1"/>
-
-            <!-- Parse JSON result via JavaScript eval -->
-            
-            <script language="javascript">
-                var response = eval('('+project.getProperty('buildDetails')+')');
-                if(response.records[0]){
-                    project.setProperty('start.revision', response.records[0].RevisionEnd__c);
-                }else{
-                    project.setProperty('is.lastcommit.id.not.found', true);
-                }
-            </script>
+					<!-- Parse JSON result via JavaScript eval -->
+					
+					<script language="javascript">
+						var response = eval('('+project.getProperty('buildDetails')+')');
+						if(response.records[0]){
+							project.setProperty('start.revision', response.records[0].RevisionEnd__c);
+						}else{
+							project.setProperty('is.lastcommit.id.not.found', true);
+						}
+					</script>
+						
+				</then>
+				<else>
+					<echo>${line.separator} *** Full deployment started... </echo>
+				
+				</else>
+			</if>
             
             <!-- check if the start revision set then take second last commit id -->
             
            
             <if>
 
-                <equals arg1="${is.lastcommit.id.not.found}" arg2="true"/>
-               
-                <then>
-                    <echo> ${line.separator} *** last commit id not found from salesforce ***</echo>
+                <or>
+				<equals arg1="${is.lastcommit.id.not.found}" arg2="true"/>
+				<equals arg1="@{isFull}" arg2="true"/>
+                </or>
+                <then>                    
                 	 <antcall target="buildSB">
                 	  </antcall>                    
                     <!-- need to be updated after the call-->
                     <!-- set is deployed property so that build record will be created -->
                     <property name="is.deployed" value="true"/>
                 </then>
-                <else>
-                   
+                <else>                   
                     <echo> ${line.separator} *** last revision found in Salesforce : ${start.revision} </echo>
                     <echo> ${line.separator} *** check for ${start.revision} and ${end.revision} ***</echo>
                     <delete dir="@{packageXmlFolder}"/>
@@ -330,7 +344,27 @@
                     <mkdir dir="@{diffLogFolder}"/>
                     <mkdir dir="@{deploymentFolderPath}"/>
             
-                    <!-- getting diff log from git beween two version using svn commandline "-->
+                    
+					<git command="diff" outputproperty="isPreCleanRequired" >
+						<args>
+                        <arg line="--name-status"/>
+                        <arg line="${start.revision}"/>
+                        <arg line="${end.revision}"/>
+                        <arg line="--"/>
+                        <arg line="${git.preclean}"/>
+						</args>
+					</git>
+					
+					<if>
+						<not>
+						<equals arg1="${isPreCleanRequired}" arg2="" />
+						</not>
+							<then>
+								<antcall target="unDeploySB">
+								</antcall> 
+							</then>
+					</if>
+					<!-- getting diff log from git beween two version using svn commandline "-->
                     <echo> ${line.separator} *** Geting the git change log between ${start.revision} and ${end.revision} ***</echo>
             
                     <exec executable="git"  output="@{diffLogFolder}/${git.difflog.name}" >
@@ -386,48 +420,60 @@
                     <echo>${line.separator} ***load destrucitve package xml folder  **** ${line.separator}</echo>
                     <echo>${line.separator} ${desctucitvepackagexml} ${line.separator} </echo>
             
-                    <if>
+					
+					<if>
+					<available file="config/OneOffPackage.name"/>
+					<then>
+						<echo>${line.separator} ***Merging OneOff package Xml with Incremental package XML  **** ${line.separator}</echo>
+						<mergePackageXml SrcPackageXmlDir="config/OneOffPackage.name" DespackageXmlDir="@{deploymentFolderPath}/${packagexml.name}">
+						</mergePackageXml>
+					</then>
+					</if>
+					
+					<if>
                         <available file="@{packageXmlFolder}/${sf.deploycodepkg.fld.name}/${packagexml.name}"/>
                         <then>
                             <copyfiles srcUrl="${git.src}" destUrl="@{deploymentFolderPath}"
                                packageXmlDir="@{packageXmlFolder}"/>
                             <echo>${line.separator} Deployment folder created </echo>
                         </then>
-
+                        <elseif>
+                            <available file="@{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name}"/>
+                            <then>
+                                <copy todir="@{deploymentFolderPath}" overwrite="false">
+                                    <fileset dir="@{packageXmlFolder}/${sf.removecodepkg.fld.name}"/>
+                                </copy>
+                            </then>
+                        </elseif>
                     </if>
+										
+					<if>
+					<available file="config/OneOffDeletePackage.name"/>
+					<then>
+						<echo>${line.separator} ***Merging OneOff Delete Xml with Incremental Delete XML  **** ${line.separator}</echo>
+						<mergePackageXml SrcPackageXmlDir="config/OneOffDeletePackage.xml" DespackageXmlDir="@{deploymentFolderPath}/${destructiveChanges.packagexml.name}">
+						</mergePackageXml>
+					</then>
+					</if>
+
+					
                     <echo>${line.separator} ****start deployment **** ${line.separator}</echo>
                     <!-- code deploymnet -->
                     
-                    <if>
+					<if>
                         <available file="@{deploymentFolderPath}/${packagexml.name}"/>
                         <then>
                             <sf:deploy  sessionId="${sessionId}"
                                 pollWaitMillis = "${sf.pollWaitMillis}"
                                 maxPoll = "${sf.maxPoll}"
                                 autoUpdatePackage = "true"
-                                serverurl="${sfsb.instanceurl}" 
+                                serverurl="${sf.instanceurl}" 
                                 ignoreWarnings="true" 
                                 deployRoot="@{deploymentFolderPath}"
                                 rollbackOnError="true">
                             </sf:deploy>
                             <property name="is.deployed" value="true"/>
                         </then>
-                
-                        <elseif>
-                    
-                            <available                                            file="@{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name}"/>
-                            <then>
-                                <sf:deploy sessionId="${sessionId}" 
-                                           serverurl="${sfsb.instanceurl}" 
-                                           pollWaitMillis = "${sf.pollWaitMillis}"
-                                           maxPoll="${sf.maxPoll}"
-                            deployRoot="@{packageXmlFolder}/${sf.removecodepkg.fld.name}" 
-                                           ignoreWarnings="true" 
-                                           rollbackOnError="true">
-                                </sf:deploy>
-                                <property name="is.deployed" value="true"/>
-                            </then>
-                        </elseif>
                         <else>
                             <echo>***Nothing found for Deployment *** </echo>
                         </else>
@@ -435,7 +481,7 @@
                     
                     
                 </else>
-                
+              
              </if>
             
             <trycatch property="build.record.exception" >
@@ -445,7 +491,7 @@
                   <if>
                     <equals arg1="${is.deployed}" arg2="true" />
                         <then>
-                            <zip destfile="@{packageXmlFolder}/${sf.backup.fld.name}" basedir="@{packageXmlFolder}"/> 
+                            <zip destfile="@{packageXmlFolder}/${sf.backup.fld.name}" basedir="@{deploymentFolderPath}"/> 
                             <createBuildRecord
                                 sessionId = "${sessionId}"
                                 startrev = "${start.revision}"
@@ -485,7 +531,7 @@
         <attribute name="startrev" description="Salesforce password." default="${start.revision}"/>
         <attribute name="endrev" description="Salesforce password." default ="${end.revision}"/>
         <attribute name="rootdir"  description="Git Diff log folder"/>
-       
+        <attribute name="isFull"  default="false" description="Full or Incremental deployment. Default is Incremental."/>
         <sequential>
            
             <echo>${line.separator} ****Check for describe log avilability **** </echo>
@@ -509,7 +555,8 @@
                 sfpassword = "@{sfpassword}"
                 sfloginUrl = "@{sfloginUrl}"
                 packageXmlFolder="@{rootdir}/${git.packagexml.fld.name}"
-                deploymentFolderPath="@{rootdir}/${git.sf.deployment.fld.name}"/>
+                deploymentFolderPath="@{rootdir}/${git.sf.deployment.fld.name}"
+				isFull="@{isFull}"/>
 
         </sequential>
        
@@ -529,7 +576,7 @@
         </sequential>
     </macrodef>
     
-    <target name="DeploySB" >      
+    <target name="Deploy-Incremental-SB">      
         
         <deploytosf        
             sfusername="${sfsb.username}"
@@ -538,7 +585,22 @@
             sfloginUrl="${sf.login.url}"             
             endpointForBuildRecord = "${sf.buildrecord.endpoint}"
             endpointForBuildAttachment = "${sf.attachment.endpoint}" 
-            rootdir = "${git.salesforce.root.dir}" />
+            rootdir = "${git.salesforce.root.dir}" 
+			isFull="false"/>
+          
+    </target>
+	
+	<target name="Deploy-Full-SB">      
+        
+        <deploytosf        
+            sfusername="${sfsb.username}"
+            sfpassword="${sfsb.password}" 
+            sfserverurl="${sfsb.serverurl}"
+            sfloginUrl="${sf.login.url}"             
+            endpointForBuildRecord = "${sf.buildrecord.endpoint}"
+            endpointForBuildAttachment = "${sf.attachment.endpoint}" 
+            rootdir = "${git.salesforce.root.dir}" 
+			isFull="true"/>
           
     </target>
     
@@ -549,7 +611,7 @@
 		</sf:deploy>
 		</target>	
     
-	<target name="unDeploySB">
+	<target name="unDeploySB">	
     	<sf:deploy username="${sfsb.username}" password="${sfsb.password}" serverurl="${sfsb.serverurl}"
 					deployroot="pre-clean"
 					ignoreWarnings="true"
