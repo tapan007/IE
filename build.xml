@@ -416,6 +416,9 @@
 						<mergePackageXml SrcPackageXmlDir="config/OneOffPackage.xml" DespackageXmlDir="@{packageXmlFolder}/${sf.deploycodepkg.fld.name}/${packagexml.name}">
 						</mergePackageXml>
 					</then>
+					<else>
+						<echo>${line.separator} ***OneOff package Xml not found...  **** ${line.separator}</echo>
+					</else>
 					</if>
 					
 					<if>
@@ -438,10 +441,14 @@
 					<if>
 					<available file="config/OneOffDeletePackage.xml"/>
 					<then>
-						<echo>${line.separator} ***Merging OneOff Delete Xml with Incremental Delete XML  **** ${line.separator}</echo>
+						<echo>${line.separator} ***Merging OneOff delete Xml with Incremental Delete XML  **** ${line.separator}</echo>
 						<mergePackageXml SrcPackageXmlDir="config/OneOffDeletePackage.xml" DespackageXmlDir="@{deploymentFolderPath}/${destructiveChanges.packagexml.name}">
 						</mergePackageXml>
 					</then>
+					<else>
+						<echo>${line.separator} ***OneOff delete Xml not found...  **** ${line.separator}</echo>
+					</else>
+
 					</if>
 
                     <echo>***load package xml folder @{deploymentFolderPath}/${packagexml.name} *** </echo>
