@@ -7,12 +7,12 @@
 	<property environment="env"/>
     
     <!-- deploymentExcepions.xml -->
-	<!-- <import file="./build-resource/deploymentExceptions.xml"/> -->
+	<import file="./build-resource/deploymentExceptions.xml"/>
     
     <!-- Define salesforce migration tool task  -->
     <taskdef resource="com/salesforce/antlib.xml" uri="antlib:com.salesforce">
         <classpath>
-            <pathelement location="ant-salesforce.jar" />
+            <pathelement location="lib/ant-salesforce.jar" />
         </classpath>
     </taskdef>
     
@@ -313,7 +313,8 @@
                
                 <then>
                     <echo> ${line.separator} *** last commit id not found from salesforce ***</echo>
-                    
+                	 <antcall target="buildSB">
+                	  </antcall>                    
                     <!-- need to be updated after the call-->
                     <!-- set is deployed property so that build record will be created -->
                     <property name="is.deployed" value="true"/>
@@ -404,7 +405,7 @@
                                 pollWaitMillis = "${sf.pollWaitMillis}"
                                 maxPoll = "${sf.maxPoll}"
                                 autoUpdatePackage = "true"
-                                serverurl="${sf.instanceurl}" 
+                                serverurl="${sfsb.instanceurl}" 
                                 ignoreWarnings="true" 
                                 deployRoot="@{deploymentFolderPath}"
                                 rollbackOnError="true">
@@ -417,7 +418,7 @@
                             <available                                            file="@{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name}"/>
                             <then>
                                 <sf:deploy sessionId="${sessionId}" 
-                                           serverurl="${sf.instanceurl}" 
+                                           serverurl="${sfsb.instanceurl}" 
                                            pollWaitMillis = "${sf.pollWaitMillis}"
                                            maxPoll="${sf.maxPoll}"
                             deployRoot="@{packageXmlFolder}/${sf.removecodepkg.fld.name}" 
@@ -528,12 +529,12 @@
         </sequential>
     </macrodef>
     
-    <target name="deploy-to-sf-from-codehub" >      
+    <target name="DeploySB" >      
         
         <deploytosf        
-            sfusername="${sf.username}"
-            sfpassword="${sf.password}" 
-            sfserverurl="${sf.serverurl}"
+            sfusername="${sfsb.username}"
+            sfpassword="${sfsb.password}" 
+            sfserverurl="${sfsb.serverurl}"
             sfloginUrl="${sf.login.url}"             
             endpointForBuildRecord = "${sf.buildrecord.endpoint}"
             endpointForBuildAttachment = "${sf.attachment.endpoint}" 
@@ -541,8 +542,27 @@
           
     </target>
     
-
+	<target name="buildSB" depends="RemoveUnwantedMetadata,unDeploySB">
+		<sf:deploy username="${sfsb.username}" password="${sfsb.password}" serverurl="${sfsb.serverurl}" 
+					ignoreWarnings="true" 
+					deployRoot="src">
+		</sf:deploy>
+		</target>	
     
-   
+	<target name="unDeploySB">
+    	<sf:deploy username="${sfsb.username}" password="${sfsb.password}" serverurl="${sfsb.serverurl}"
+					deployroot="pre-clean"
+					ignoreWarnings="true"
+					purgeOnDelete="true">
+		</sf:deploy>
+	</target>
     
+	<target name="RetrieveFullSB">
+			<sf:retrieve username="${sfsb.username}" password="${sfsb.password}" serverurl="${sfsb.serverurl}"
+		    			 retrieveTarget="src"
+		      			 unpackaged="src/package.xml"/>
+			
+		  <antcall target="RemoveUnwantedMetadata">
+	  		</antcall>
+	</target>
 </project>

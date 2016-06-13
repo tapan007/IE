@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+
+    <!-- If changing an API name:
+    	enter the original name in the destructiveChangesPre.xml 
+    	then enter new name below using appropriate metadata format-->
+  <version>36.0</version>
+</Package>

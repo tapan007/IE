@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+		<members>ServiceCalloutToRulesEngine</members>
+		<members>ServiceCallOutToRulesEngineTest</members>
+		<members>SubmitApplication</members>
+		<members>SubmitCases</members>
+		<name>ApexClass</name>
+	</types>
+    <types>
+        <members>Case_View2</members>
+        <name>VisualforcePage</name>
+    </types>
+
+	
+<!-- list metadata types and components below to delete, 
+	deletion is prior to update made by package.xml
+	Note: * NOT supported
+	Use below format; 
+	<types> 
+		<members>ObjectName.FieldName__c</members> 
+		<name>CustomField</name> 
+	</types> -->
+	<version>36.0</version>
+</Package>

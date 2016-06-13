@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">	 
+<!-- list metadata types and components below to delete, 
+	deletion is prior to update made by package.xml
+	Note: * NOT supported
+	
+	Use below format; 
+	<types> 
+		<members>ObjectName.FieldName__c</members> 
+		<name>CustomField</name> 
+	</types> -->
+	
+	<types> 
+		<members>Case.Is_Resident__c</members> 		
+        <members>Case.Status_Start_Date__c</members>
+        <members>Case.Case__c</members>
+        <members>Case.Client_Name__c</members>	
+        <members>Case.Review_Date__c</members>
+        <members>Case.Service_Location__c</members>
+        <members>Client_Income__c.Deduction_Frequency__c</members>
+        <members>Client_Income__c.Expense_Frequency__c</members>				 		
+        <members>Client_Income__c.Expense_Sharing__c</members>
+        <members>Client_Income__c.Frequency_of_Income__c</members>
+        <members>Client_Income__c.Income_Change_Current__c</members>
+        <members>Client_Income_Additional__c.Frequency_of_Income__c</members>
+        <members>Client_Document__c.External_Id__c</members>
+        <members>Client_Document__c.File_Name__c</members>
+        <members>Client_Document__c.Id__c</members>
+        <members>Client_Document__c.URL__c</members>
+        <members>Case.Program_Status__c</members>
+        <name>CustomField</name>
+    </types>
+	<types>
+		<members>Worker_Reports/Active_Cases</members>
+        <members>Worker_Reports/Closed_Cases</members>
+        <members>Worker_Reports/Denied_Cases</members>
+        <members>Worker_Reports/My_Client_Cases</members>
+        <members>Worker_Reports/Pending_Cases</members>
+     	<name>Report</name>
+     </types>
+	
+	<version>36.0</version>
+</Package>
