@@ -412,7 +412,7 @@
 					<available file="config/OneOffPackage.xml"/>
 					<then>
 						<echo>${line.separator} ***Merging OneOff package Xml with Incremental package XML  **** ${line.separator}</echo>
-						<mergePackageXml SrcPackageXmlDir="config/OneOffPackage.name" DespackageXmlDir="@{deploymentFolderPath}/${packagexml.name}">
+						<mergePackageXml SrcPackageXmlDir="config/OneOffPackage.xml" DespackageXmlDir="@{deploymentFolderPath}/${packagexml.name}">
 						</mergePackageXml>
 					</then>
 					</if>
