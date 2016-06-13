@@ -60,18 +60,7 @@
         <type>Text</type>
         <unique>false</unique>
     </fields>
-    
-    <fields>
-        <fullName>encryp__c</fullName>
-        <externalId>false</externalId>
-        <label>encryp</label>
-        <length>10</length>
-        <maskChar>X</maskChar>
-        <maskType>lastFour</maskType>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>EncryptedText</type>
-    </fields>
+ 
     <fields>
         <fullName>link__c</fullName>
         <externalId>false</externalId>

@@ -406,23 +406,10 @@
                     <preparepackagexml svnDiffLogUrl="@{diffLogFolder}/${git.difflog.name}"
                                        packageXmlUrl="@{packageXmlFolder}"/>
             
-                    <echo>***load package xml folder @{packageXmlFolder}/${sf.deploycodepkg.fld.name}/${packagexml.name} *** </echo>
-                    <loadfile property="packagexml" 
-                                  srcFile="@{packageXmlFolder}/${sf.deploycodepkg.fld.name}/${packagexml.name}"  failonerror="false"/>
-
-                    <echo>${line.separator} ***load package xml folder  **** ${line.separator}</echo>
-                    <echo>${line.separator} ${packagexml} ${line.separator} </echo>
-                    <echo>***load desturctive package xml folder @{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name} *** </echo>
-                    <loadfile property="desctucitvepackagexml" 
-                                  srcFile="@{packageXmlFolder}/${sf.removecodepkg.fld.name}/${destructiveChanges.packagexml.name}"  
-                              failonerror="false"/>
-
-                    <echo>${line.separator} ***load destrucitve package xml folder  **** ${line.separator}</echo>
-                    <echo>${line.separator} ${desctucitvepackagexml} ${line.separator} </echo>
-            
+           
 					
 					<if>
-					<available file="config/OneOffPackage.name"/>
+					<available file="config/OneOffPackage.xml"/>
 					<then>
 						<echo>${line.separator} ***Merging OneOff package Xml with Incremental package XML  **** ${line.separator}</echo>
 						<mergePackageXml SrcPackageXmlDir="config/OneOffPackage.name" DespackageXmlDir="@{deploymentFolderPath}/${packagexml.name}">
@@ -448,13 +435,27 @@
                     </if>
 										
 					<if>
-					<available file="config/OneOffDeletePackage.name"/>
+					<available file="config/OneOffDeletePackage.xml"/>
 					<then>
 						<echo>${line.separator} ***Merging OneOff Delete Xml with Incremental Delete XML  **** ${line.separator}</echo>
 						<mergePackageXml SrcPackageXmlDir="config/OneOffDeletePackage.xml" DespackageXmlDir="@{deploymentFolderPath}/${destructiveChanges.packagexml.name}">
 						</mergePackageXml>
 					</then>
 					</if>
+
+                    <echo>***load package xml folder @{deploymentFolderPath}/${packagexml.name} *** </echo>
+                    <loadfile property="packagexml" 
+                                  srcFile="@{deploymentFolderPath}/${packagexml.name}"  failonerror="false"/>
+
+                    <echo>${line.separator} ***load package xml folder  **** ${line.separator}</echo>
+                    <echo>${line.separator} ${packagexml} ${line.separator} </echo>
+                    <echo>***load desturctive package xml folder @{deploymentFolderPath}/${destructiveChanges.packagexml.name} *** </echo>
+                    <loadfile property="desctucitvepackagexml" 
+                                  srcFile="@{deploymentFolderPath}/${destructiveChanges.packagexml.name}"  
+                              failonerror="false"/>
+
+                    <echo>${line.separator} ***load destrucitve package xml folder  **** ${line.separator}</echo>
+                    <echo>${line.separator} ${desctucitvepackagexml} ${line.separator} </echo>
 
 					
                     <echo>${line.separator} ****start deployment **** ${line.separator}</echo>
@@ -467,7 +468,7 @@
                                 pollWaitMillis = "${sf.pollWaitMillis}"
                                 maxPoll = "${sf.maxPoll}"
                                 autoUpdatePackage = "true"
-                                serverurl="${sf.instanceurl}" 
+                                serverurl="${sfsb.instanceurl}" 
                                 ignoreWarnings="true" 
                                 deployRoot="@{deploymentFolderPath}"
                                 rollbackOnError="true">

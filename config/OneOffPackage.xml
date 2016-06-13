@@ -2,8 +2,8 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <!-- Only fields that need to be perm. deleted  -->
-        <members></members>
-        <name>CustomFields</name>
+        <members>demo</members>
+        <name>ApexPage</name>
     </types>
     <version>36.0</version>
 </Package>
